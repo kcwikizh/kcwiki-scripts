@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+from __future__ import unicode_literals
 from moebot import MwApi
 import json
 import re
@@ -20,7 +22,7 @@ def extract(mw, title):
         return ''
     pageid = list(rep['contents'].keys())[0]
     if int(pageid) == -1:
-        print('页面【{}】不存在'.format(title).encode('utf-8'))
+        print('页面【{}】不存在'.format(title))
         return ''
     rep = mw.content(pid=pageid)
     if not rep['success']:
@@ -39,7 +41,7 @@ def post_process(content, lang='zh'):
         pattern = re.compile(r'\{\{台词翻译表(?:.|\n)*?档名\s*?=(.*?)\s*?\n(?:.|\n)*?日文台词\s*?=([^\|\{\}]*?)(?:\|(?:.|\n)*?)?\}\}',
                              re.MULTILINE)
     results = re.findall(pattern, content)
-    namemap = json.load(open('namemap.json', 'r'))
+    namemap = json.load(open('../data/namemap.json', 'r'))
     post_results = []
     for item in results:
         filename, dialogue = item
@@ -53,7 +55,7 @@ def post_process(content, lang='zh'):
             mp3 = namemap[filename.split('-')[1]]
         else:
             continue
-        print('{}, {}.mp3, {}'.format(no, mp3, dialogue).encode('utf-8'))
+        print('{}, {}.mp3, {}'.format(no, mp3, dialogue))
         post_results.append((no, mp3, dialogue))
     return post_results
 
@@ -62,7 +64,7 @@ def search_ship(ships, sortno):
     for ship in ships:
         if not ship:
             continue
-        if ship['api_sortno'] == sortno:
+        if ship['sort_no'] == sortno:
             return ship
 
 
@@ -93,17 +95,17 @@ def handleSeason(mw, ships, subtitles, title, no, lang):
     print(len(results))
     for sortno, dialogue in results:
         ship = search_ship(ships, int(sortno))
-        print(ship['api_id'], ship['api_name'].encode('utf-8'), dialogue.encode('utf-8'))
-        if ship['api_id'] not in subtitles:
-            subtitles[ship['api_id']] = {}
-        subtitles[ship['api_id']][no] = dialogue
+        print(ship['id'], ship['name'], dialogue)
+        if ship['id'] not in subtitles:
+            subtitles[ship['id']] = {}
+        subtitles[ship['id']][no] = dialogue
         loop_count = 0
-        while int(ship['api_aftershipid']) > 0 and loop_count < 10:
+        while int(ship['after_ship_id']) > 0 and loop_count < 10:
             loop_count += 1
-            ship = ships[int(ship['api_aftershipid'])]
-            if ship['api_id'] not in subtitles:
-                subtitles[ship['api_id']] = {}
-            subtitles[ship['api_id']][no] = dialogue
+            ship = ships[int(ship['after_ship_id'])]
+            if ship['id'] not in subtitles:
+                subtitles[ship['id']] = {}
+            subtitles[ship['id']][no] = dialogue
     return subtitles
 
 
@@ -112,35 +114,35 @@ def generate_subtitles(results, ships, ship, subtitles_map, subtitles_distinct):
     for no, mp3, dialogue in results:
         if no.endswith('a'):
             continue
-        if int(no) == int(ship['api_sortno']):
+        if int(no) == int(ship['sort_no']):
             subtitles[mp3] = dialogue
-    subtitles_map[int(ship['api_id'])] = subtitles
-    subtitles_distinct[int(ship['api_id'])] = copy.copy(subtitles)
-    if int(ship['api_aftershipid']) <= 0:
+    subtitles_map[int(ship['id'])] = subtitles
+    subtitles_distinct[int(ship['id'])] = copy.copy(subtitles)
+    if int(ship['after_ship_id']) <= 0:
         return
-    shipKai = ships[int(ship['api_aftershipid'])]
+    shipKai = ships[int(ship['after_ship_id'])]
     subtitlesKai = subtitles.copy()
-    subtitles_distinct[int(shipKai['api_id'])] = {}
-    print('读取【{}】的翻译'.format(shipKai['api_name']).encode('utf-8'))
+    subtitles_distinct[int(shipKai['id'])] = {}
+    print('读取【{}】的翻译'.format(shipKai['name']))
     for no, mp3, dialogue in results:
-        if no.endswith('a') and int(no[:-1]) == int(ship['api_sortno'])\
-                or not no.endswith('a') and int(no) == int(shipKai['api_sortno']):
+        if no.endswith('a') and int(no[:-1]) == int(ship['sort_no'])\
+                or not no.endswith('a') and int(no) == int(shipKai['sort_no']):
             subtitlesKai[mp3] = dialogue
-            subtitles_distinct[int(shipKai['api_id'])][mp3] = dialogue
-    subtitles_map[int(shipKai['api_id'])] = subtitlesKai
-    while int(shipKai['api_aftershipid']) > 0 and\
-            not int(shipKai['api_aftershipid']) in subtitles_map:
-        shipKai = ships[int(shipKai['api_aftershipid'])]
+            subtitles_distinct[int(shipKai['id'])][mp3] = dialogue
+    subtitles_map[int(shipKai['id'])] = subtitlesKai
+    while int(shipKai['after_ship_id']) > 0 and\
+            not int(shipKai['after_ship_id']) in subtitles_map:
+        shipKai = ships[int(shipKai['after_ship_id'])]
         subtitlesKai = subtitlesKai.copy()
-        subtitles_distinct[int(shipKai['api_id'])] = {}
-        print('读取【{}】的翻译'.format(shipKai['api_name']).encode('utf-8'))
+        subtitles_distinct[int(shipKai['id'])] = {}
+        print('读取【{}】的翻译'.format(shipKai['name']))
         for no, mp3, dialogue in results:
             if no.endswith('a'):
                 continue
-            if int(no) == int(shipKai['api_sortno']):
+            if int(no) == int(shipKai['sort_no']):
                 subtitlesKai[mp3] = dialogue
-                subtitles_distinct[int(shipKai['api_id'])][mp3] = dialogue
-        subtitles_map[int(shipKai['api_id'])] = subtitlesKai
+                subtitles_distinct[int(shipKai['id'])][mp3] = dialogue
+        subtitles_map[int(shipKai['id'])] = subtitlesKai
 
 
 def monkey_patch(subtitles_map_jp, subtitles_map_zh):
@@ -179,7 +181,7 @@ def main():
     subtitles_map_zh = {}
     subtitles_map_jp = {}
     subtitles_distinct = {'zh': {}, 'jp': {}}
-    ships = json.load(open('ship.json', 'r'))
+    ships = json.load(open('../data/ship.json', 'r'))
     ships = ships[:480]
     missing = []
     ext_title_map = {
@@ -189,22 +191,22 @@ def main():
         'あきつ丸': '秋津丸'
     }
     for ship in ships:
-        if not ship or ship['api_name'].find('改') >= 0\
-                or int(ship['api_id']) in subtitles_map_zh\
-                or ship['api_name'].find('zwei') >= 0\
-                or ship['api_name'].find('drei') >= 0:
+        if not ship or ship['name'].find('改') >= 0\
+                or int(ship['id']) in subtitles_map_zh\
+                or ship['name'].find('zwei') >= 0\
+                or ship['name'].find('drei') >= 0:
             continue
-        title = ship['api_name'].replace('黒', '黑')\
+        title = ship['name'].replace('黒', '黑')\
             .replace('巻', '卷').replace('満', '满')\
             .replace('穂', '穗').replace('歳', '岁')\
             .replace('叡', '睿')
         if title in ext_title_map:
             title = ext_title_map[title]
-        print('正在获取【{}】页面'.format(title).encode('utf-8'))
+        print('正在获取【{}】页面'.format(title))
         content = extract(mw, title)
         results = post_process(content, 'zh')
         if len(results) <= 0:
-            print('缺少【{}】的语音翻译'.format(title).encode('utf-8'))
+            print('缺少【{}】的语音翻译'.format(title))
             missing.append(title)
             continue
         generate_subtitles(results, ships, ship,
@@ -228,13 +230,13 @@ def main():
     now = datetime.datetime.now().strftime('%Y%m%d%H') + suffix
     subtitles_map_zh['version'] = now
     subtitles_map_jp['version'] = now
-    deployFilename = '{}.json'.format(now)
-    json.dump(subtitles_map_zh, open('subtitles.json', 'w'))
-    json.dump(subtitles_map_jp, open('subtitlesJP.json', 'w'))
+    deployFilename = '../data/{}.json'.format(now)
+    json.dump(subtitles_map_zh, open('../data/subtitles.json', 'w'))
+    json.dump(subtitles_map_jp, open('../data/subtitlesJP.json', 'w'))
     json.dump(subtitles_map_zh, open(deployFilename, 'w'))
-    json.dump(subtitles_distinct, open('subtitles_distinct.json', 'w'))
-    json.dump(missing, open('missing.json', 'w'))
-    return (deployFilename, 'subtitlesJP.json')
+    json.dump(subtitles_distinct, open('../data/subtitles_distinct.json', 'w'))
+    json.dump(missing, open('../data/missing.json', 'w'))
+    return (deployFilename, '../data/subtitlesJP.json')
 
 
 def test():
@@ -244,7 +246,7 @@ def test():
     results = extract(mw, title)
     results = post_process(results)
     if len(results) <= 0:
-        print('缺少【{}】的语音翻译'.format(title).encode('utf-8'))
+        print('缺少【{}】的语音翻译'.format(title))
 
 
 def deploy():
