@@ -1,3 +1,4 @@
 data/*.json
+!data/namemap.json
 __pycache__
 *.pyc
