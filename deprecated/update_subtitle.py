@@ -176,6 +176,16 @@ def monkey_patch(subtitles_map_jp, subtitles_map_zh):
     subtitles_map_jp[44][2] = 'てるてる坊主…？じゃぁ、村雨が作ってみますね。ほら、ここをこうして…できました。'
     subtitles_map_zh[244][2] = '晴天娃娃…？那，村雨来做一个试试吧。看好，这里要这样子…做好了。'
     subtitles_map_jp[244][2] = 'てるてる坊主…？じゃぁ、村雨が作ってみますね。ほら、ここをこうして…できました。'
+    # Patch hibiki's subtitle
+    subtitles_map_zh[35][2] = '电酱的晴天娃娃，真不错，好可爱呢。晓的那个，什么玩意儿，怪兽嘛？ '
+    subtitles_map_jp[35][2] = '電のてるてる坊主、いいな、可愛い。暁のそれは、何だい、怪獣？ '
+    subtitles_map_zh[235][2] = '电酱的晴天娃娃，真不错，好可爱呢。晓的那个，什么玩意儿，怪兽嘛？ '
+    subtitles_map_jp[235][2] = '電のてるてる坊主、いいな、可愛い。暁のそれは、何だい、怪獣？ '
+    subtitles_map_zh[147][2] = '电酱的晴天娃娃，真不错，好可爱呢。晓的那个，什么玩意儿，怪兽嘛？ '
+    subtitles_map_jp[147][2] = '電のてるてる坊主、いいな、可愛い。暁のそれは、何だい、怪獣？ '
+    subtitles_map_zh[147][3] = '司令官的手……好温暖。在苏联的时候，这样的一双手绝对是我最珍贵的宝物。 '
+    subtitles_map_jp[147][3] = '司令官の手は、温かいな。…いや、その…ロシアでは、重宝される手だ '
+
 
 
 def main():
@@ -225,6 +235,8 @@ def main():
     # handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年春至', 2, 'jp')
     handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年梅雨季节', 2, 'zh')
     handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年梅雨季节', 2, 'jp')
+    handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年初夏季节', 2, 'zh')
+    handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年初夏季节', 2, 'jp')
 
     # Monkey Patch for spring rainy event (ry
     monkey_patch(subtitles_map_jp, subtitles_map_zh)
