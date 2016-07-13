@@ -272,8 +272,8 @@ def deploy():
         deployFilename, deployJpFilename = main()
         if not deployFilename:
             return
-        copyfile(deployFilename, deployDir + 'zh-cn/' + deployFilename)
-        copyfile(deployJpFilename, deployDir + 'jp/' + deployFilename)
+        copyfile('../data/' + deployFilename, deployDir + 'zh-cn/' + deployFilename)
+        copyfile('../data/' + deployJpFilename, deployDir + 'jp/' + deployFilename)
         # copyfile('subtitles_distinct.json', deployDir + '../subtitles_distinct.json')
         # TODO git commit
         metaFile = deployDir + 'meta.json'
