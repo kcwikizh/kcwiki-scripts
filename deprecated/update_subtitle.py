@@ -180,7 +180,7 @@ def monkey_patch(subtitles_map_jp, subtitles_map_zh):
 
 def main():
     mw = MwApi('http://zh.kcwiki.moe/api.php')
-    mw.login('grzhan', 'shenyanghua')
+    mw.login(config['account']['username'], config['account']['password'])
     subtitles_map_zh = {}
     subtitles_map_jp = {}
     subtitles_distinct = {'zh': {}, 'jp': {}}
@@ -244,7 +244,7 @@ def main():
 
 def test():
     mw = MwApi('http://zh.kcwiki.moe/api.php')
-    mw.login('grzhan', 'shenyanghua')
+    mw.login(config['account']['username'], config['account']['password'])
     title = '伊19'
     results = extract(mw, title)
     results = post_process(results)

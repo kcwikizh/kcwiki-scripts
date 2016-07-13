@@ -3,3 +3,6 @@ local:
     subtitle: '/Users/pro/Workspace/tricklin/api.kcwiki.moe/storage/app/subtitles/'
 production:
     subtitle: '/var/www/api.kcwiki.moe/storage/app/subtitles/'
+account:
+    username: 'grzhan'
+    password: 'somepassword'
