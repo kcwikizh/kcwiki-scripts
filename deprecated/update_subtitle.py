@@ -13,6 +13,9 @@ import argparse
 import sys
 import traceback
 import copy
+import yaml
+
+config = yaml.load(open('../config.yaml', 'r'))
 
 
 def extract(mw, title):
@@ -251,8 +254,9 @@ def test():
 
 def deploy():
     try:
+        env = config['env']
         # deployDir = '/var/www/api.kcwiki.moe/storage/app/subtitles/'
-        deployDir = '/Users/pro/Workspace/tricklin/api.kcwiki.moe/storage/app/subtitles/'
+        deployDir = config[env]['subtitle']
         deployFilename, deployJpFilename = main()
         if not deployFilename:
             return
@@ -269,7 +273,7 @@ def deploy():
     except KeyboardInterrupt as e:
         sys.exit(0)
     except Exception as e:
-        traceback.print_exec()
+        traceback.print_exc()
 
 
 def plan():
