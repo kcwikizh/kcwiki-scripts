@@ -245,13 +245,13 @@ def main():
     now = datetime.datetime.now().strftime('%Y%m%d%H') + suffix
     subtitles_map_zh['version'] = now
     subtitles_map_jp['version'] = now
-    deployFilename = '../data/{}.json'.format(now)
+    deployFilename = '{}.json'.format(now)
     json.dump(subtitles_map_zh, open('../data/subtitles.json', 'w'))
     json.dump(subtitles_map_jp, open('../data/subtitlesJP.json', 'w'))
-    json.dump(subtitles_map_zh, open(deployFilename, 'w'))
+    json.dump(subtitles_map_zh, open('../data/' + deployFilename, 'w'))
     json.dump(subtitles_distinct, open('../data/subtitles_distinct.json', 'w'))
     json.dump(missing, open('../data/missing.json', 'w'))
-    return (deployFilename, '../data/subtitlesJP.json')
+    return (deployFilename, 'subtitlesJP.json')
 
 
 def test():
