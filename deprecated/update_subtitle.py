@@ -88,27 +88,36 @@ def post_process_for_season(content, lang='zh'):
         dialogue = re.sub(r'<br.*?>', '', dialogue).strip()
         dialogue = re.sub(r'<(.*)>.*?<\/\1>', '', dialogue)
         no = filename.split('-')[0]
-        post_results.append((no, dialogue))
+        archive_name = filename.split('-')[1]
+        with open('../data/namemap.json', 'r') as f:
+            namemap = json.load(f)
+            pattern = re.compile(r'({})'.format('|'.join(namemap.keys())))
+            voice = re.findall(pattern, archive_name)
+            if len(voice) < 1:
+                print('季节性档名异常')
+                sys.exit(0)
+            voice_no = namemap[voice[0]]
+        post_results.append((no, dialogue, voice_no))
     return post_results
 
 
-def handleSeason(mw, ships, subtitles, title, no, lang):
+def handleSeason(mw, ships, subtitles, title, lang):
     content = extract(mw, title)
     results = post_process_for_season(content, lang)
     print(len(results))
-    for sortno, dialogue in results:
+    for sortno, dialogue, voice_no in results:
         ship = search_ship(ships, int(sortno))
-        print(ship['id'], ship['name'], dialogue)
+        print(ship['id'], ship['name'], dialogue, voice_no)
         if ship['id'] not in subtitles:
             subtitles[ship['id']] = {}
-        subtitles[ship['id']][no] = dialogue
+        subtitles[ship['id']][voice_no] = dialogue
         loop_count = 0
         while int(ship['after_ship_id']) > 0 and loop_count < 10:
             loop_count += 1
             ship = ships[int(ship['after_ship_id'])]
             if ship['id'] not in subtitles:
                 subtitles[ship['id']] = {}
-            subtitles[ship['id']][no] = dialogue
+            subtitles[ship['id']][voice_no] = dialogue
     return subtitles
 
 
@@ -146,46 +155,6 @@ def generate_subtitles(results, ships, ship, subtitles_map, subtitles_distinct):
                 subtitlesKai[mp3] = dialogue
                 subtitles_distinct[int(shipKai['id'])][mp3] = dialogue
         subtitles_map[int(shipKai['id'])] = subtitlesKai
-
-
-def monkey_patch(subtitles_map_jp, subtitles_map_zh):
-    # Change taihou's subtitle
-    subtitles_map_zh[153][2] = '雨一直不停的话，会妨碍到舰载机的训练。好担心航空队的练度。嗯—'
-    subtitles_map_zh[153][3] = '对了，想象成暴雨时出动的训练不就可以了。 好！舰载机全员，准备训…咦，人呢？咦…？'
-    subtitles_map_jp[153][2] = '雨が続くと、艦載機の訓練に支障が出るわね。航空隊の練度が心配。んー'
-    subtitles_map_jp[153][3] = 'そうか、荒天時運用の訓練と考えればいいのよね。 よし！艦載機の皆さん、訓練に…あれ、皆さん？あれ…？'
-    subtitles_map_zh[156][2] = '雨一直不停的话，会妨碍到舰载机的训练。好担心航空队的练度。嗯—'
-    subtitles_map_zh[156][3] = '对了，想象成暴雨时出动的训练不就可以了。 好！舰载机全员，准备训…咦，人呢？咦…？'
-    subtitles_map_jp[156][2] = '雨が続くと、艦載機の訓練に支障が出るわね。航空隊の練度が心配。んー'
-    subtitles_map_jp[156][3] = 'そうか、荒天時運用の訓練と考えればいいのよね。 よし！艦載機の皆さん、訓練に…あれ、皆さん？あれ…？'
-    # Change yuutachi's subtitle
-    subtitles_map_zh[45][2] = '嗯，下雨天虽然会变得懒懒的不想出门，但是，还是要出去了poi！po~i！'
-    subtitles_map_jp[45][2] = 'んん、雨の日は出無精になってしまいがちだけど、でも、外に出かけるっぽい！ぽーい！'
-    subtitles_map_zh[45][3] = '呜嗯~好舒服POI！o(≧v≦)o~~'
-    subtitles_map_jp[45][3] = 'うぅ、うぅ～んっ、気持ちいいっぽーい！'
-    subtitles_map_zh[245][2] = '嗯，下雨天虽然会变得懒懒的不想出门，但是，还是要出去了poi！po~i！'
-    subtitles_map_jp[245][2] = 'んん、雨の日は出無精になってしまいがちだけど、でも、外に出かけるっぽい！ぽーい！'
-    subtitles_map_zh[245][3] = '呜嗯~好舒服POI！o(≧v≦)o~~'
-    subtitles_map_jp[245][3] = 'うぅ、うぅ～んっ、気持ちいいっぽーい！'
-    subtitles_map_zh[144][2] = '嗯，下雨天虽然会变得懒懒的不想出门，但是，还是要出去了poi！po~i！'
-    subtitles_map_jp[144][2] = 'んん、雨の日は出無精になってしまいがちだけど、でも、外に出かけるっぽい！ぽーい！'
-    subtitles_map_zh[144][3] = '呜嗯~好舒服POI！o(≧v≦)o~~'
-    subtitles_map_jp[144][3] = 'うぅ、うぅ～んっ、気持ちいいっぽーい！'
-    # Change murasame's subtitle
-    subtitles_map_zh[44][2] = '晴天娃娃…？那，村雨来做一个试试吧。看好，这里要这样子…做好了。'
-    subtitles_map_jp[44][2] = 'てるてる坊主…？じゃぁ、村雨が作ってみますね。ほら、ここをこうして…できました。'
-    subtitles_map_zh[244][2] = '晴天娃娃…？那，村雨来做一个试试吧。看好，这里要这样子…做好了。'
-    subtitles_map_jp[244][2] = 'てるてる坊主…？じゃぁ、村雨が作ってみますね。ほら、ここをこうして…できました。'
-    # Patch hibiki's subtitle
-    subtitles_map_zh[35][2] = '电酱的晴天娃娃，真不错，好可爱呢。晓的那个，什么玩意儿，怪兽嘛？ '
-    subtitles_map_jp[35][2] = '電のてるてる坊主、いいな、可愛い。暁のそれは、何だい、怪獣？ '
-    subtitles_map_zh[235][2] = '电酱的晴天娃娃，真不错，好可爱呢。晓的那个，什么玩意儿，怪兽嘛？ '
-    subtitles_map_jp[235][2] = '電のてるてる坊主、いいな、可愛い。暁のそれは、何だい、怪獣？ '
-    subtitles_map_zh[147][2] = '电酱的晴天娃娃，真不错，好可爱呢。晓的那个，什么玩意儿，怪兽嘛？ '
-    subtitles_map_jp[147][2] = '電のてるてる坊主、いいな、可愛い。暁のそれは、何だい、怪獣？ '
-    subtitles_map_zh[147][3] = '司令官的手……好温暖。在苏联的时候，这样的一双手绝对是我最珍贵的宝物。 '
-    subtitles_map_jp[147][3] = '司令官の手は、温かいな。…いや、その…ロシアでは、重宝される手だ '
-
 
 
 def main():
@@ -228,18 +197,8 @@ def main():
         generate_subtitles(results, ships, ship,
                            subtitles_map_jp, subtitles_distinct['jp'])
 
-    # 情人节
-    # subtitles_map = handleSeason(mw, ships, subtitles_map, '季节性/2016年白色情人节', 2)
-    # 春季语音
-    # handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年春至', 2, 'zh')
-    # handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年春至', 2, 'jp')
-    handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年梅雨季节', 2, 'zh')
-    handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年梅雨季节', 2, 'jp')
-    handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年初夏季节', 2, 'zh')
-    handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年初夏季节', 2, 'jp')
-
-    # Monkey Patch for spring rainy event (ry
-    monkey_patch(subtitles_map_jp, subtitles_map_zh)
+    handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年初夏季节', 'zh')
+    handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年初夏季节', 'jp')
 
     suffix = ''
     now = datetime.datetime.now().strftime('%Y%m%d%H') + suffix
@@ -274,7 +233,7 @@ def deploy():
             return
         copyfile('../data/' + deployFilename, deployDir + 'zh-cn/' + deployFilename)
         copyfile('../data/' + deployJpFilename, deployDir + 'jp/' + deployFilename)
-        # copyfile('subtitles_distinct.json', deployDir + '../subtitles_distinct.json')
+        copyfile('../data/subtitles_distinct.json', deployDir + 'subtitles_distinct.json')
         # TODO git commit
         metaFile = deployDir + 'meta.json'
         meta = json.load(open(metaFile, 'r'))
