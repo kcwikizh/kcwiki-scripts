@@ -94,7 +94,7 @@ def post_process_for_season(content, lang='zh'):
             pattern = re.compile(r'({})'.format('|'.join(namemap.keys())))
             voice = re.findall(pattern, archive_name)
             if len(voice) < 1:
-                print('季节性档名异常')
+                print('季节性档名异常，档名：{}'.format(archive_name))
                 sys.exit(0)
             voice_no = namemap[voice[0]]
         post_results.append((no, dialogue, voice_no))
@@ -199,6 +199,8 @@ def main():
 
     handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年初夏季节', 'zh')
     handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年初夏季节', 'jp')
+    handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年盛夏季节', 'zh')
+    handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年盛夏季节', 'jp')
 
     suffix = ''
     now = datetime.datetime.now().strftime('%Y%m%d%H') + suffix
