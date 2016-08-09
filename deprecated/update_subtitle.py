@@ -92,9 +92,9 @@ def post_process_for_season(content, lang='zh'):
         with open('../data/namemap.json', 'r') as f:
             namemap = json.load(f)
             pattern = re.compile(r'({})'.format('|'.join(namemap.keys())))
-            voice = re.findall(pattern, archive_name)
+            voice = re.findall(pattern, filename)
             if len(voice) < 1:
-                print('季节性档名异常，档名：{}'.format(archive_name))
+                print('季节性档名异常，档名：{}'.format(filename))
                 voice_no = 2
             else:
                 voice_no = namemap[voice[0]]
