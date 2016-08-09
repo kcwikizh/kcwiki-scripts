@@ -95,8 +95,9 @@ def post_process_for_season(content, lang='zh'):
             voice = re.findall(pattern, archive_name)
             if len(voice) < 1:
                 print('季节性档名异常，档名：{}'.format(archive_name))
-                sys.exit(0)
-            voice_no = namemap[voice[0]]
+                voice_no = 2
+            else:
+                voice_no = namemap[voice[0]]
         post_results.append((no, dialogue, voice_no))
     return post_results
 
