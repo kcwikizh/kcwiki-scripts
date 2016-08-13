@@ -174,12 +174,12 @@ def main():
         'あきつ丸': '秋津丸'
     }
     for ship in ships:
-        if not ship or ship['name'].find('改') >= 0\
+        if not ship or ship['chinese_name'].find('改') >= 0\
                 or int(ship['id']) in subtitles_map_zh\
-                or ship['name'].find('zwei') >= 0\
-                or ship['name'].find('drei') >= 0:
+                or ship['chinese_name'].find('zwei') >= 0\
+                or ship['chinese_name'].find('drei') >= 0:
             continue
-        title = ship['name'].replace('黒', '黑')\
+        title = ship['chinese_name'].replace('黒', '黑')\
             .replace('巻', '卷').replace('満', '满')\
             .replace('穂', '穗').replace('歳', '岁')\
             .replace('叡', '睿')
