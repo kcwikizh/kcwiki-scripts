@@ -165,7 +165,7 @@ def main():
     subtitles_map_jp = {}
     subtitles_distinct = {'zh': {}, 'jp': {}}
     ships = json.load(open('../data/ship.json', 'r'))
-    ships = ships[:480]
+    ships = ships[:490]
     missing = []
     ext_title_map = {
         'まるゆ': '丸输',
