@@ -159,7 +159,7 @@ def generate_subtitles(results, ships, ship, subtitles_map, subtitles_distinct):
 
 
 def main():
-    mw = MwApi('http://zh.kcwiki.moe/api.php')
+    mw = MwApi('https://zh.kcwiki.moe/api.php')
     mw.login(config['account']['username'], config['account']['password'])
     subtitles_map_zh = {}
     subtitles_map_jp = {}
