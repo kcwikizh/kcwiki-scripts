@@ -1,5 +1,6 @@
 PyYAML==3.11
 click==6.6
+colorama==0.3.7
 moebot==0.1.2
 requests==2.10.0
 schedule==0.3.2

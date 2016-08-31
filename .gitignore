@@ -3,3 +3,4 @@ data/*.json
 *.yaml
 __pycache__
 *.pyc
+.idea
