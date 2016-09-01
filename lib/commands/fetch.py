@@ -3,8 +3,11 @@
 import click
 import requests
 import re
+import json
+import datetime
 from ..common.utils import Echo as echo
-from ..common.config import config
+from ..common.utils import user_agent
+from ..common.config import config, data_dir
 
 UTF8 = 'utf-8'
 
@@ -15,7 +18,61 @@ def fetch_cmd():
 
 
 @fetch_cmd.command(name="fetch:start2")
-def fetch_start2():
+def command_fetch_start2():
+    """fetch start2 json data (ooi support)"""
+    fetch_start2_ooi()
+
+
+def fetch_start2_ooi():
+    ooi_url = 'http://cm.gakki.pw'
+    start2_url = '{}/kcsapi/api_start2'.format(ooi_url)
+    session = requests.session()
+    session.headers.update({'User-Agent': user_agent})
+    # session.proxies = { 'http': 'http://127.0.0.1:8080'}
+    echo.info('[TASK] Fetching start2 json data from OOI ...')
+    # 登录 OOI
+    payload = {'login_id': config['dmm_account']['username'],
+               'password': config['dmm_account']['password'],
+               'mode': 1}
+    echo.info('[POST] {} ...'.format(ooi_url))
+    rep = session.post(ooi_url, payload)
+    if rep.url != '{}/kancolle'.format(ooi_url):
+        echo.error('[ERROR] ooi login failed (code: {}, url: {})'.format(
+            rep.status_code, rep.url))
+        return
+    html = rep.text
+    m = re.search(r'api_token=([\d|\w]+)', html)
+    if m:
+        api_token = m.group(1)
+    else:
+        echo.error('[ERROR] api token not found')
+        return
+    # 获取 API_TOKEN 之后, 抓取 start2 数据
+    payload = {'api_token': api_token, 'api_verno': 1}
+    echo.info('[POST] {} ...'.format(start2_url))
+    rep = session.post(start2_url, payload)
+    raw = rep.text
+    m = re.search('svdata=(.*)', raw)
+    if m:
+        data = json.loads(m.group(1))
+        if 'api_result' in data and data['api_result'] == 1:
+            start2 = data['api_data']
+            today = datetime.datetime.now().strftime("%Y%m%d%H%S")
+            start2_path = '{}/start2.{}.json'.format(data_dir, today)
+            json.dump(start2, open(start2_path, 'w'))
+            return start2
+        else:
+            echo.error('[ERROR] api result is invalid')
+            print(data)
+            return
+    else:
+        echo.error('[ERROR] start2 data not found')
+        return
+    # 将抓取的 start2 数据上传到 api.kcwiki.moe
+
+
+
+def fetch_start2_dmm():
     """fetch start2 json data (auto login)"""
     session = requests.session()
     home_url = 'https://www.dmm.com'

@@ -40,4 +40,3 @@ def update_ships():
 def update_enemies():
     """Update enemies data from api.kcwiki.moe"""
     ships = Api.ships()
-    enemies[480:]
