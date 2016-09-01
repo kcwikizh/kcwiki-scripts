@@ -26,6 +26,7 @@ def command_fetch_start2():
 def fetch_start2_ooi():
     ooi_url = 'http://cm.gakki.pw'
     start2_url = '{}/kcsapi/api_start2'.format(ooi_url)
+    kcwiki_api_upload_url = 'http://api.kcwiki.moe/start2/upload'
     session = requests.session()
     session.headers.update({'User-Agent': user_agent})
     # session.proxies = { 'http': 'http://127.0.0.1:8080'}
@@ -60,7 +61,6 @@ def fetch_start2_ooi():
             today = datetime.datetime.now().strftime("%Y%m%d%H%S")
             start2_path = '{}/start2.{}.json'.format(data_dir, today)
             json.dump(start2, open(start2_path, 'w'))
-            return start2
         else:
             echo.error('[ERROR] api result is invalid')
             print(data)
@@ -69,7 +69,18 @@ def fetch_start2_ooi():
         echo.error('[ERROR] start2 data not found')
         return
     # 将抓取的 start2 数据上传到 api.kcwiki.moe
-
+    echo.info('[POST] upload start2 data to api.kcwiki.moe ...')
+    password = config['api_password']
+    rep = requests.post(kcwiki_api_upload_url, {'password': password,
+                                                'data': json.dumps(start2)}).json()
+    if 'result' not in rep or rep['result'] != 'success':
+        echo.error('[ERROR] upload failed')
+        if 'reason' in rep:
+            echo.error('[ERROR] failure reason: {}'.format(rep['reason']))
+        else:
+            print(rep)
+        return
+    echo.info('[TASK] Done.')
 
 
 def fetch_start2_dmm():

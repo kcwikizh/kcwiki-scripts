@@ -6,3 +6,7 @@ production:
 account:
     username: 'grzhan'
     password: 'somepassword'
+dmm_account:
+    username: 'emailaddress'
+    password: 'somepassword'
+api_password: 'somepassword'
