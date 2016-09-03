@@ -63,12 +63,13 @@ def post_process(content, lang='zh'):
     return post_results
 
 
-def search_ship(ships, sortno):
+def search_ship(ships, wiki_id):
     for ship in ships:
         if not ship:
             continue
-        if ship['sort_no'] == sortno:
+        if ship['wiki_id'] == wiki_id:
             return ship
+    print('ship({}) is not found.'.format(wiki_id))
 
 
 def post_process_for_season(content, lang='zh'):
@@ -106,8 +107,8 @@ def handleSeason(mw, ships, subtitles, title, lang):
     content = extract(mw, title)
     results = post_process_for_season(content, lang)
     print(len(results))
-    for sortno, dialogue, voice_no in results:
-        ship = search_ship(ships, int(sortno))
+    for wiki_id, dialogue, voice_no in results:
+        ship = search_ship(ships, wiki_id.strip())
         print(ship['id'], ship['name'], dialogue, voice_no)
         if ship['id'] not in subtitles:
             subtitles[ship['id']] = {}
@@ -198,10 +199,10 @@ def main():
         generate_subtitles(results, ships, ship,
                            subtitles_map_jp, subtitles_distinct['jp'])
 
-    handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年初夏季节', 'zh')
-    handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年初夏季节', 'jp')
-    handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年盛夏季节', 'zh')
-    handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年盛夏季节', 'jp')
+    # handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年初夏季节', 'zh')
+    # handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年初夏季节', 'jp')
+    handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年初秋季节', 'zh')
+    handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年初秋季节', 'jp')
 
     suffix = ''
     now = datetime.datetime.now().strftime('%Y%m%d%H') + suffix
