@@ -36,6 +36,7 @@ def extract(mw, title):
 
 
 def post_process(content, lang='zh'):
+    content = re.sub(r'<(.*)>.*?</\1>', '', content)
     content = re.sub(r'{{ruby-zh\|(.*?)\|(.*?)}}', r'\1(\2)', content)
     if lang == 'zh':
         pattern = re.compile(r'\{\{台词翻译表(?:.|\n)*?档名\s*?=(.*?)\s*?\n(?:.|\n)*?中文译文\s*?=([^\|\{\}]*?)(?:\|(?:.|\n)*?)?\}\}',
@@ -73,6 +74,7 @@ def search_ship(ships, wiki_id):
 
 
 def post_process_for_season(content, lang='zh'):
+    content = re.sub(r'<(.*)>.*?</\1>', '', content)
     content = re.sub(r'{{ruby-zh\|(.*?)\|(.*?)}}', r'\1(\2)', content)
     if lang == 'zh':
         pattern = re.compile(r'\{\{台词翻译表(?:.|\n)*?档名\s*?=(.*?)\s*?\n(?:.|\n)*?中文译文\s*?=([^\|\{\}]*?)(?:\|(?:.|\n)*?)?\}\}',

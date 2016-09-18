@@ -2,10 +2,18 @@
 # -*- coding: utf-8 -*-
 import json
 import click
-from ..services.api import KcwikiApi as Api
+import datetime
+import requests
+from os import path
+from shutil import copyfile
+from lib.common.config import data_dir, config
+from lib.common.utils import Echo as echo
+from lib.services.api import KcwikiApi as Api
+from lib.services.subtitle import SubtitleService
 
 
 @click.group()
+
 def update_cmd():
     pass
 
@@ -24,7 +32,7 @@ def update_ships():
         _id = int(ship['id'])
         try:
             results[_id] = ship
-        except IndexError as e:
+        except IndexError:
             print(_id)
             print(ship)
     with open('data/ship.json', 'w') as f:
@@ -38,4 +46,35 @@ def update_ships():
 @update_cmd.command(name='update:enemies')
 def update_enemies():
     """Update enemies data from api.kcwiki.moe"""
-    ships = Api.ships()
+    pass
+
+
+@update_cmd.command(name='update:subtitles')
+@click.argument('mode', default='main')
+@click.option('--scope', '-s', default='all')
+@click.pass_obj
+def update_subtitles(ctx, mode, scope):
+    """Update kancolle musume quotes"""
+    if mode in ['main', 'deploy']:
+        subtitles_service = SubtitleService()
+        subtitles = subtitles_service.get(scope)
+        json.dump(subtitles['zh'], open(path.join(data_dir, 'subtitles.json'), 'w'))
+        json.dump(subtitles['jp'], open(path.join(data_dir, 'subtitlesJP.json'), 'w'))
+        json.dump(subtitles['distinct'], open(path.join(data_dir, 'subtitles_distinct.json'), 'w'))
+        if mode == 'deploy':
+            env = config['env']
+            now = datetime.datetime.now().strftime('%Y%m%d%H')
+            deploy_filename = now + '.json'
+            deploy_dir = config[env]['subtitle']
+            copyfile(path.join(data_dir, 'subtitles.json'), path.join(deploy_dir, 'zh-cn', deploy_filename))
+            copyfile(path.join(data_dir, 'subtitlesJP.json'), path.join(deploy_dir, 'jp', deploy_filename))
+            copyfile(path.join(data_dir, 'subtitles_distinct.json'), path.join(deploy_dir, 'subtitles_distinct.json'))
+            meta_file = path.join(deploy_dir, 'meta.json')
+            meta = json.load(open(meta_file, 'r'))
+            meta['latest'] = deploy_filename[:-5]
+            json.dump(meta, open(meta_file, 'w'))
+            # Purge cache in api.kcwiki.moe
+            requests.get('http://api.kcwiki.moe/purge/subtitles')
+    echo.info('Done.')
+
+
