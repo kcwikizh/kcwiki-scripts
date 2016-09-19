@@ -14,6 +14,7 @@ class VoiceService(object):
         super(VoiceService, self).__init__()
         self.total = 0
         self.counter = itertools.count()
+        self.failed_counter = itertools.count()
         self.ship_service = ShipService()
         self.ships = self.ship_service.get()
         self.root = CONFIG['voice_cache']
@@ -34,6 +35,8 @@ class VoiceService(object):
         self.total = len(queue)
         pool = ThreadPool(1)
         pool.map(self.download_worker, queue)
+        failed_count = next(self.failed_counter)
+        echo.info('Total failed request: {}'.format(failed_count))
         echo.info('End.')
 
     def download_worker(self, url):
@@ -52,6 +55,8 @@ class VoiceService(object):
                                 f.write(chunk)
                 else:
                     echo.error('{} {} ({}/{})'.format(url, rep.status_code, value+1, self.total))
+                    if rep.status_code != 404:
+                        next(self.failed_counter)
                 break
             except Exception as e:
                 if isinstance(e, KeyboardInterrupt):
