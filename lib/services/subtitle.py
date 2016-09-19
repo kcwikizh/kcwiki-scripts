@@ -5,7 +5,7 @@ from os import path
 from moebot import MwApi
 from .ship import ShipService
 from lib.common.log import debug
-from lib.common.config import config, data_dir
+from lib.common.config import CONFIG, DATA_DIR
 from lib.common.utils import has_keys, Echo as echo
 
 
@@ -13,7 +13,7 @@ class SubtitleService(object):
     def __init__(self):
         super(SubtitleService, self).__init__()
         self.mw = MwApi('https://zh.kcwiki.moe/api.php')
-        self.mw.login(config['account']['username'], config['account']['password'])
+        self.mw.login(CONFIG['account']['username'], CONFIG['account']['password'])
         self.ship_service = ShipService()
         self.ships = self.ship_service.get()
         self.ships = self.ships[:490]
@@ -95,7 +95,7 @@ class SubtitleService(object):
     def _post_process(content, lang='zh'):
         """ 后处理,从舰娘百科词条中正则提取台词翻译 """
         results = []
-        namemap = json.load(open(path.join(data_dir, 'namemap.json'), 'r'))
+        namemap = json.load(open(path.join(DATA_DIR, 'namemap.json'), 'r'))
         re_lang_map = {'zh': '中文译文', 'jp': '日文台词'}
         content = re.sub(r'<(.*)>.*?</\1>', '', content)
         content = re.sub(r'{{ruby-zh\|(.*?)\|(.*?)}}', r'\1(\2)', content)
@@ -206,7 +206,7 @@ class SubtitleService(object):
             quote = re.sub(r'<br.*?>', '', quote).strip()
             quote = re.sub(r'<(.*)>.*?</\1>', '', quote)
             no = filename.split('-')[0]
-            namemap = json.load(open(path.join(data_dir, 'namemap.json'), 'r'))
+            namemap = json.load(open(path.join(DATA_DIR, 'namemap.json'), 'r'))
             pattern = re.compile(r'({})'.format('|'.join(namemap.keys())))
             voice = re.findall(pattern, filename)
             if len(voice) < 1:

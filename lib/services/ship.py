@@ -1,13 +1,13 @@
 import json
 from os import path
 from .api import KcwikiApi
-from ..common.config import data_dir
+from ..common.config import DATA_DIR
 from ..common.utils import has_keys, Echo as echo
 
 
 class ShipService(object):
     def __init__(self):
-        ship_path = path.join(data_dir, 'ship.json')
+        ship_path = path.join(DATA_DIR, 'ship.json')
         if path.exists(ship_path):
             self.ships = json.load(open(ship_path, 'r'))
         else:
@@ -62,7 +62,7 @@ class ShipService(object):
             except IndexError:
                 print(_id)
                 print(ship)
-        with open(path.join(data_dir, 'ship.json'), 'w') as f:
+        with open(path.join(DATA_DIR, 'ship.json'), 'w') as f:
             json.dump(results, f)
         if results:
             echo.info('update ship data success!')

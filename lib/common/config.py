@@ -1,6 +1,6 @@
 import yaml
 import os
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-config = yaml.load(open("{}/../../config.yaml".format(dir_path), 'r'))
-data_dir = '{}/../../data'.format(dir_path)
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+CONFIG = yaml.load(open("{}/../../config.yaml".format(DIR_PATH), 'r'))
+DATA_DIR = '{}/../../data'.format(DIR_PATH)

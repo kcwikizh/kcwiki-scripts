@@ -6,14 +6,13 @@ import datetime
 import requests
 from os import path
 from shutil import copyfile
-from lib.common.config import data_dir, config
+from lib.common.config import DATA_DIR, CONFIG
 from lib.common.utils import Echo as echo
 from lib.services.api import KcwikiApi as Api
 from lib.services.subtitle import SubtitleService
 
 
 @click.group()
-
 def update_cmd():
     pass
 
@@ -58,17 +57,17 @@ def update_subtitles(ctx, mode, scope):
     if mode in ['main', 'deploy']:
         subtitles_service = SubtitleService()
         subtitles = subtitles_service.get(scope)
-        json.dump(subtitles['zh'], open(path.join(data_dir, 'subtitles.json'), 'w'))
-        json.dump(subtitles['jp'], open(path.join(data_dir, 'subtitlesJP.json'), 'w'))
-        json.dump(subtitles['distinct'], open(path.join(data_dir, 'subtitles_distinct.json'), 'w'))
+        json.dump(subtitles['zh'], open(path.join(DATA_DIR, 'subtitles.json'), 'w'))
+        json.dump(subtitles['jp'], open(path.join(DATA_DIR, 'subtitlesJP.json'), 'w'))
+        json.dump(subtitles['distinct'], open(path.join(DATA_DIR, 'subtitles_distinct.json'), 'w'))
         if mode == 'deploy':
-            env = config['env']
+            env = CONFIG['env']
             now = datetime.datetime.now().strftime('%Y%m%d%H')
             deploy_filename = now + '.json'
-            deploy_dir = config[env]['subtitle']
-            copyfile(path.join(data_dir, 'subtitles.json'), path.join(deploy_dir, 'zh-cn', deploy_filename))
-            copyfile(path.join(data_dir, 'subtitlesJP.json'), path.join(deploy_dir, 'jp', deploy_filename))
-            copyfile(path.join(data_dir, 'subtitles_distinct.json'), path.join(deploy_dir, 'subtitles_distinct.json'))
+            deploy_dir = CONFIG[env]['subtitle']
+            copyfile(path.join(DATA_DIR, 'subtitles.json'), path.join(deploy_dir, 'zh-cn', deploy_filename))
+            copyfile(path.join(DATA_DIR, 'subtitlesJP.json'), path.join(deploy_dir, 'jp', deploy_filename))
+            copyfile(path.join(DATA_DIR, 'subtitles_distinct.json'), path.join(deploy_dir, 'subtitles_distinct.json'))
             meta_file = path.join(deploy_dir, 'meta.json')
             meta = json.load(open(meta_file, 'r'))
             meta['latest'] = deploy_filename[:-5]

@@ -6,8 +6,8 @@ import re
 import json
 import datetime
 from ..common.utils import Echo as echo
-from ..common.utils import user_agent
-from ..common.config import config, data_dir
+from ..common.utils import USER_AGENT
+from ..common.config import CONFIG, DATA_DIR
 
 UTF8 = 'utf-8'
 
@@ -28,12 +28,12 @@ def fetch_start2_ooi():
     start2_url = '{}/kcsapi/api_start2'.format(ooi_url)
     kcwiki_api_upload_url = 'http://api.kcwiki.moe/start2/upload'
     session = requests.session()
-    session.headers.update({'User-Agent': user_agent})
+    session.headers.update({'User-Agent': USER_AGENT})
     # session.proxies = { 'http': 'http://127.0.0.1:8080'}
     echo.info('[TASK] Fetching start2 json data from OOI ...')
     # 登录 OOI
-    payload = {'login_id': config['dmm_account']['username'],
-               'password': config['dmm_account']['password'],
+    payload = {'login_id': CONFIG['dmm_account']['username'],
+               'password': CONFIG['dmm_account']['password'],
                'mode': 1}
     echo.info('[POST] {} ...'.format(ooi_url))
     rep = session.post(ooi_url, payload)
@@ -59,7 +59,7 @@ def fetch_start2_ooi():
         if 'api_result' in data and data['api_result'] == 1:
             start2 = data['api_data']
             today = datetime.datetime.now().strftime("%Y%m%d%H%S")
-            start2_path = '{}/start2.{}.json'.format(data_dir, today)
+            start2_path = '{}/start2.{}.json'.format(DATA_DIR, today)
             json.dump(start2, open(start2_path, 'w'))
         else:
             echo.error('[ERROR] api result is invalid')
@@ -70,7 +70,7 @@ def fetch_start2_ooi():
         return
     # 将抓取的 start2 数据上传到 api.kcwiki.moe
     echo.info('[POST] upload start2 data to api.kcwiki.moe ...')
-    password = config['api_password']
+    password = CONFIG['api_password']
     rep = requests.post(kcwiki_api_upload_url, {'password': password,
                                                 'data': json.dumps(start2)}).json()
     if 'result' not in rep or rep['result'] != 'success':
@@ -124,8 +124,8 @@ def fetch_start2_dmm():
     rep_data = rep.json()
     session.headers['DMM_TOKEN'] = None
     session.headers['X-Requested-With'] = None
-    username = config['dmm_account']['username']
-    password = config['dmm_account']['password']
+    username = CONFIG['dmm_account']['username']
+    password = CONFIG['dmm_account']['password']
     login_payload = {
         'token': rep_data['token'],
         'login_id': username,
