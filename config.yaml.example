@@ -1,8 +1,11 @@
 env: local
+debug: false
+log: 'somewhere.log'
 local:
     subtitle: '/Users/pro/Workspace/tricklin/api.kcwiki.moe/storage/app/subtitles/'
 production:
     subtitle: '/var/www/api.kcwiki.moe/storage/app/subtitles/'
+voice_cache: '/somewhere'
 account:
     username: 'grzhan'
     password: 'somepassword'
