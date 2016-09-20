@@ -30,6 +30,8 @@ class SubtitleService(object):
             return self.get_seasonal()
         elif mode == 'main':
             return self.get_main()
+        elif mode == 'cache':
+            return self.get_cache()
         else:
             raise SubtitleServiceError(
                 'SubtitlesService.get has a invalid argument: type_({})'.format(mode))
@@ -51,6 +53,14 @@ class SubtitleService(object):
     def get_seasonal(self):
         self._handle_seasonal('季节性/2016年初秋季节', 'zh')
         self._handle_seasonal('季节性/2016年初秋季节', 'jp')
+        return self.subtitles
+
+    def get_cache(self):
+        self.clean()
+        zh = json.load(open(path.join(DATA_DIR, 'subtitles.json'), 'r'))
+        jp = json.load(open(path.join(DATA_DIR, 'subtitlesJP.json'), 'r'))
+        distinct = json.load(open(path.join(DATA_DIR, 'subtitles_distinct.json'), 'r'))
+        self.subtitles = {'zh': zh, 'jp': jp, 'distinct': distinct}
         return self.subtitles
 
     def clean(self):
