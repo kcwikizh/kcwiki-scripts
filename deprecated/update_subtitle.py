@@ -246,7 +246,7 @@ def deploy():
         meta['latest'] = deployFilename[:-5]
         json.dump(meta, open(metaFile, 'w'))
         # Purge cache in api.kcwiki.moe
-        requests.get('http://api.kcwiki.moe/purge')
+        requests.get('http://api.kcwiki.moe/purge/subtitles')
     except KeyboardInterrupt as e:
         sys.exit(0)
     except Exception as e:
