@@ -51,8 +51,10 @@ class SubtitleService(object):
         return self.subtitles
 
     def get_seasonal(self):
-        self._handle_seasonal('季节性/2016年初秋季节', 'zh')
-        self._handle_seasonal('季节性/2016年初秋季节', 'jp')
+        pages = CONFIG['quote_seasonal_page']
+        for page in pages:
+            self._handle_seasonal(page, 'zh')
+            self._handle_seasonal(page, 'jp')
         return self.subtitles
 
     def get_cache(self):

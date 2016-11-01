@@ -12,7 +12,8 @@ def plan_cmd():
 
 
 @plan_cmd.command(name='plan')
-def plan():
+@click.pass_context
+def plan(ctx):
     """job scheduling"""
     schedule.every().hour.do(fetch_start2_ooi)
     while True:
@@ -24,4 +25,3 @@ def plan():
                 return
             traceback.print_exc()
         time.sleep(5)
-

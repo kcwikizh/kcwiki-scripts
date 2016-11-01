@@ -13,3 +13,6 @@ dmm_account:
     username: 'emailaddress'
     password: 'somepassword'
 api_password: 'somepassword'
+quote_seasonal_page:
+    - '季节性/2016年初秋季节'
+    - '季节性/2016年秋刀鱼祭典'

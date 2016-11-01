@@ -201,22 +201,22 @@ def main():
         generate_subtitles(results, ships, ship,
                            subtitles_map_jp, subtitles_distinct['jp'])
 
-    # handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年初夏季节', 'zh')
-    # handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年初夏季节', 'jp')
-    handleSeason(mw, ships, subtitles_map_zh, '季节性/2016年初秋季节', 'zh')
-    handleSeason(mw, ships, subtitles_map_jp, '季节性/2016年初秋季节', 'jp')
+    titles = config['quote_seasonal_page']
+    for title in titles:
+        handleSeason(mw, ships, subtitles_map_zh, title, 'zh')
+        handleSeason(mw, ships, subtitles_map_jp, title, 'jp')
 
     suffix = ''
     now = datetime.datetime.now().strftime('%Y%m%d%H') + suffix
     subtitles_map_zh['version'] = now
     subtitles_map_jp['version'] = now
-    deployFilename = '{}.json'.format(now)
+    deploy_filename = '{}.json'.format(now)
     json.dump(subtitles_map_zh, open('../data/subtitles.json', 'w'))
     json.dump(subtitles_map_jp, open('../data/subtitlesJP.json', 'w'))
-    json.dump(subtitles_map_zh, open('../data/' + deployFilename, 'w'))
+    json.dump(subtitles_map_zh, open('../data/' + deploy_filename, 'w'))
     json.dump(subtitles_distinct, open('../data/subtitles_distinct.json', 'w'))
     json.dump(missing, open('../data/missing.json', 'w'))
-    return (deployFilename, 'subtitlesJP.json')
+    return deploy_filename, 'subtitlesJP.json'
 
 
 def test():
