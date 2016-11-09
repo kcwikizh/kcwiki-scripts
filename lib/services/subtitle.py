@@ -1,8 +1,11 @@
 import re
 import json
 import copy
+import datetime
+from shutil import copyfile
 from os import path
 from moebot import MwApi
+import requests
 from .ship import ShipService
 from lib.common.log import debug
 from lib.common.config import CONFIG, DATA_DIR
@@ -103,6 +106,25 @@ class SubtitleService(object):
         content = rep['contents'][pageid]['revisions'][0]['*']
         return content
 
+    def deploy(self):
+        subtitles = self.get()
+        json.dump(subtitles['zh'], open(path.join(DATA_DIR, 'subtitles.json'), 'w'))
+        json.dump(subtitles['jp'], open(path.join(DATA_DIR, 'subtitlesJP.json'), 'w'))
+        json.dump(subtitles['distinct'], open(path.join(DATA_DIR, 'subtitles_distinct.json'), 'w'))
+        env = CONFIG['env']
+        now = datetime.datetime.now().strftime('%Y%m%d%H')
+        deploy_filename = now + '.json'
+        deploy_dir = CONFIG[env]['subtitle']
+        copyfile(path.join(DATA_DIR, 'subtitles.json'), path.join(deploy_dir, 'zh-cn', deploy_filename))
+        copyfile(path.join(DATA_DIR, 'subtitlesJP.json'), path.join(deploy_dir, 'jp', deploy_filename))
+        copyfile(path.join(DATA_DIR, 'subtitles_distinct.json'), path.join(deploy_dir, 'subtitles_distinct.json'))
+        meta_file = path.join(deploy_dir, 'meta.json')
+        meta = json.load(open(meta_file, 'r'))
+        meta['latest'] = deploy_filename[:-5]
+        json.dump(meta, open(meta_file, 'w'))
+        # Purge cache in api.kcwiki.moe
+        requests.get('http://api.kcwiki.moe/purge/subtitles')
+
     @staticmethod
     def _post_process(content, lang='zh'):
         """ 后处理,从舰娘百科词条中正则提取台词翻译 """
@@ -199,6 +221,7 @@ class SubtitleService(object):
                 if ship_id not in self.subtitles[lang]:
                     self.subtitles[lang][ship_id] = {}
                 self.subtitles[lang][ship_id][voice_no] = quote
+
 
     @staticmethod
     def _post_process_seasonal(content, lang='zh'):
