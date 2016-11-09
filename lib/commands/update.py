@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 import click
+import datetime
 from os import path
 from lib.common.config import DATA_DIR
 from lib.common.utils import Echo as echo
@@ -54,6 +55,9 @@ def update_subtitles(ctx, mode, scope):
     service = SubtitleService()
     if mode == 'main':
         subtitles = service.get(scope)
+        now = datetime.datetime.now().strftime('%Y%m%d%H')
+        subtitles['zh']['version'] = now
+        subtitles['jp']['version'] = now
         json.dump(subtitles['zh'], open(path.join(DATA_DIR, 'subtitles.json'), 'w'))
         json.dump(subtitles['jp'], open(path.join(DATA_DIR, 'subtitlesJP.json'), 'w'))
         json.dump(subtitles['distinct'], open(path.join(DATA_DIR, 'subtitles_distinct.json'), 'w'))

@@ -108,11 +108,13 @@ class SubtitleService(object):
 
     def deploy(self):
         subtitles = self.get()
+        now = datetime.datetime.now().strftime('%Y%m%d%H')
+        subtitles['zh']['version'] = now
+        subtitles['jp']['version'] = now
         json.dump(subtitles['zh'], open(path.join(DATA_DIR, 'subtitles.json'), 'w'))
         json.dump(subtitles['jp'], open(path.join(DATA_DIR, 'subtitlesJP.json'), 'w'))
         json.dump(subtitles['distinct'], open(path.join(DATA_DIR, 'subtitles_distinct.json'), 'w'))
         env = CONFIG['env']
-        now = datetime.datetime.now().strftime('%Y%m%d%H')
         deploy_filename = now + '.json'
         deploy_dir = CONFIG[env]['subtitle']
         copyfile(path.join(DATA_DIR, 'subtitles.json'), path.join(deploy_dir, 'zh-cn', deploy_filename))
