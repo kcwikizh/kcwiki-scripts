@@ -30,6 +30,6 @@ def plan(ctx):
 
 
 def task_update_subtitle():
-    service = SubtitleService
+    service = SubtitleService()
     service.deploy()
 
