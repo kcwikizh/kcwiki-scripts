@@ -13,7 +13,7 @@ class ShipService(object):
         else:
             echo.info('"ship.json" is not exist, fetch ship data now..')
             self.ships = ShipService.update()
-        self.ships = self.ships[:490]
+        self.ships = self.ships[:499]
         self.name_map = {}
         self.wiki_id_map = {}
         for ship in self.ships:

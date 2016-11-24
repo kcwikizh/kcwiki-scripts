@@ -19,7 +19,7 @@ class SubtitleService(object):
         self.mw.login(CONFIG['account']['username'], CONFIG['account']['password'])
         self.ship_service = ShipService()
         self.ships = self.ship_service.get()
-        self.ships = self.ships[:490]
+        self.ships = self.ships[:499]
         self.kaiship = self.ship_service.get_kai_set()
         self.subtitles = {'zh': {}, 'jp': {}, 'distinct': {'zh': {}, 'jp': {}}}
         self.missing = []
