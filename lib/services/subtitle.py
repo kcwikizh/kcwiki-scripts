@@ -167,7 +167,7 @@ class SubtitleService(object):
             if int(no) == sort_no:
                 subtitles[mp3] = quote
         self.subtitles[lang][ship_id] = subtitles
-        self.subtitles['distinct'][lang] = copy.copy(subtitles)
+        self.subtitles['distinct'][lang][ship_id] = copy.copy(subtitles)
         if int(ship['after_ship_id']) <= 0:
             return
         ship_kai = self.ships[after_ship_id]
@@ -197,7 +197,7 @@ class SubtitleService(object):
                     continue
                 if int(no) == ship_kai_sort_no:
                     subtitles_kai[mp3] = quote
-                    self.subtitles['distinct'][lang][mp3] = quote
+                    self.subtitles['distinct'][lang][ship_kai_id][mp3] = quote
                 self.subtitles[lang][ship_kai_id] = subtitles_kai
 
     def _handle_seasonal(self, title, lang):
