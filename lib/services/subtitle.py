@@ -134,6 +134,8 @@ class SubtitleService(object):
         namemap = json.load(open(path.join(DATA_DIR, 'namemap.json'), 'r'))
         re_lang_map = {'zh': '中文译文', 'jp': '日文台词'}
         content = re.sub(r'<(.*)>.*?</\1>', '', content)
+        content = re.sub(r'<.*?/>', '', content)
+        content = re.sub(r'<.*?>', '', content)
         content = re.sub(r'{{ruby-zh\|(.*?)\|(.*?)}}', r'\1(\2)', content)
         pattern = re.compile(r'\{\{台词翻译表(?:.|\n)*?档名\s*?=(.*?)\s*?\n(?:.|\n)*?' +
                              re_lang_map[lang] +
@@ -229,6 +231,8 @@ class SubtitleService(object):
     def _post_process_seasonal(content, lang='zh'):
         """ 季节性字幕的后处理 """
         content = re.sub(r'<(.*)>.*?</\1>', '', content)
+        content = re.sub(r'<.*?/>', '', content)
+        content = re.sub(r'<.*?>', '', content)
         content = re.sub(r'{{ruby-zh\|(.*?)\|(.*?)}}', r'\1(\2)', content)
         re_lang_map = {'zh': '中文译文', 'jp': '日文台词'}
         pattern = re.compile(r'\{\{台词翻译表(?:.|\n)*?档名\s*?=(.*?)\s*?\n(?:.|\n)*?' +
@@ -242,6 +246,8 @@ class SubtitleService(object):
                 continue
             quote = re.sub(r'<br.*?>', '', quote).strip()
             quote = re.sub(r'<(.*)>.*?</\1>', '', quote)
+            if not quote:
+                quote = 'このサブタイトルに対応するサブタイトルがありません！艦これ中国語ウィキ（https://zh.kcwiki.moe/）に参加して、この内容を一緒に完成しましょう！' if lang == 'jp' else '本字幕暂时没有翻译 请到舰娘百科(https://zh.kcwiki.moe/)协助我们翻译'
             no = filename.split('-')[0]
             namemap = json.load(open(path.join(DATA_DIR, 'namemap.json'), 'r'))
             pattern = re.compile(r'({})'.format('|'.join(namemap.keys())))
