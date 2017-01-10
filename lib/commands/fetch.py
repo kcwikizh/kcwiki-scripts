@@ -24,7 +24,7 @@ def command_fetch_start2():
 
 
 def fetch_start2_ooi():
-    ooi_url = 'http://cm.gakki.pw'
+    ooi_url = CONFIG['ooi_url']
     start2_url = '{}/kcsapi/api_start2'.format(ooi_url)
     kcwiki_api_upload_url = 'http://api.kcwiki.moe/start2/upload'
     session = requests.session()
