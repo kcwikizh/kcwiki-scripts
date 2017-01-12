@@ -56,7 +56,7 @@ class ReviseService(object):
             if not has_keys(ship, 'name', 'after_ship_id'):
                 continue
             name = ship['name']
-            after_ship_id = ship['after_ship_id']
+            after_ship_id = int(ship['after_ship_id'])
             if name.find('改二甲') >= 0 or name.find('改二乙') >= 0 or after_ship_id <= 0:
                 continue
             src_id = int(ship['id'])
