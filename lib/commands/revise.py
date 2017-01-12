@@ -15,8 +15,9 @@ def revise_download_voice():
 
 
 @revise_cmd.command(name="revise")
-def revise_main():
-    revise_service = ReviseService()
+@click.option('--version', default='v2')
+def revise_main(version='v2'):
+    revise_service = ReviseService(version)
     revise_service.handle()
 
 
