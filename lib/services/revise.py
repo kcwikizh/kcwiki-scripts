@@ -26,8 +26,8 @@ class ReviseService(object):
             if not has_keys(ship, 'filename', 'sort_no') or ship['sort_no'] <= 0:
                 continue
             ship_id = int(ship['id'])
-            name = ship[ship_id]['name']
-            filename = ship[ship_id]['filename']
+            name = ship['name']
+            filename = ship['filename']
             result = {
                 'shipId': ship_id, 'shipName': name,
                 'filename': filename, 'zh': {}, 'jp': {}, 'url': {}
