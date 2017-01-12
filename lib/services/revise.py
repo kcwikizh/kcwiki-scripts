@@ -50,8 +50,8 @@ class ReviseService(object):
                         result['jp'][i+1] = ''
                     result['url'][i+1] = url
             results[ship_id] = result
-            json.dump(result, open(path.join(data_path, '{}.json'.format(ship_id)), 'r'))
-        json.dump(results, open(path.join(DATA_DIR, 'revise.json'), 'r'))
+            json.dump(result, open(path.join(data_path, '{}.json'.format(ship_id)), 'w'))
+        json.dump(results, open(path.join(DATA_DIR, 'revise.json'), 'w'))
         for ship in self.ships:
             if not has_keys(ship, 'name', 'after_ship_id'):
                 continue
