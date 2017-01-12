@@ -35,7 +35,7 @@ class ReviseService(object):
             for i in range(53):
                 voice_id = convert_voice_filename(ship_id, i+1)
                 url = CONFIG['revise'][version]['url'].format(filename, voice_id)
-                mp3_path = '{}kc{}/{}.mp3'.format(voice_path, filename, voice_id)
+                mp3_path = '{}/kc{}/{}.mp3'.format(voice_path, filename, voice_id)
                 # 排除苍蓝语音
                 if i+1 >= 30 and ship_id in [181, 182, 183]:
                     continue
