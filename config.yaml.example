@@ -1,18 +1,29 @@
-env: local
-debug: false
-log: 'somewhere.log'
+debug: true
+env: production
+log: '/tmp/kcwiki-scripts.log'
+wiki_url: 'https://zh.kcwiki.org/api.php'
 local:
-    subtitle: '/Users/pro/Workspace/tricklin/api.kcwiki.moe/storage/app/subtitles/'
+    subtitle: '/some/path'
 production:
-    subtitle: '/var/www/api.kcwiki.moe/storage/app/subtitles/'
-voice_cache: '/somewhere'
+    subtitle: '/some/path'
+voice_cache: '/tmp/kcs'
+revise:
+    v2:
+        url: 'http://revise.kcwiki.moe/cache/kcs/sound/kc{}/{}.mp3'
+        data: '/some/path'
+    v3:
+        url: 'http://voice.kcwiki.moe/kcs/sound/kc{}/{}.mp3'
+        data: '/some/path'
 account:
-    username: 'grzhan'
+    username: 'someuser'
     password: 'somepassword'
 dmm_account:
-    username: 'emailaddress'
+    username: 'someuser'
     password: 'somepassword'
 api_password: 'somepassword'
+ooi_url: 'http://ooi.moe'
 quote_seasonal_page:
-    - '季节性/2016年初秋季节'
-    - '季节性/2016年秋刀鱼祭典'
+    - '季节性/2017年白色情人节'
+
+
+
