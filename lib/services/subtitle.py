@@ -15,11 +15,11 @@ from lib.common.utils import has_keys, Echo as echo
 class SubtitleService(object):
     def __init__(self):
         super(SubtitleService, self).__init__()
-        self.mw = MwApi('https://zh.kcwiki.moe/api.php')
+        self.mw = MwApi(CONFIG['wiki_url'])
         self.mw.login(CONFIG['account']['username'], CONFIG['account']['password'])
         self.ship_service = ShipService()
         self.ships = self.ship_service.get()
-        self.ships = self.ships[:499]
+        self.ships = self.ships[:800]
         self.kaiship = self.ship_service.get_kai_set()
         self.subtitles = {'zh': {}, 'jp': {}, 'distinct': {'zh': {}, 'jp': {}}}
         self.missing = []
