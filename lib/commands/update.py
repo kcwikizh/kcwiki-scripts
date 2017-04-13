@@ -15,9 +15,7 @@ def update_cmd():
     pass
 
 
-@update_cmd.command(name='update:ships')
 def update_ships():
-    """Update ships data from api.kcwiki.moe"""
     ships = Api.ships()
     results = []
     max_id = 0
@@ -38,6 +36,12 @@ def update_ships():
         click.echo('update ship data success!')
     else:
         click.echo('no data')
+
+
+@update_cmd.command(name='update:ships')
+def cmd_update_ships():
+    """Update ships data from api.kcwiki.moe"""
+    update_ships()
 
 
 @update_cmd.command(name='update:enemies')

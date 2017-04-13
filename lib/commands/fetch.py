@@ -58,7 +58,7 @@ def fetch_start2_ooi():
         data = json.loads(m.group(1))
         if 'api_result' in data and data['api_result'] == 1:
             start2 = data['api_data']
-            today = datetime.datetime.now().strftime("%Y%m%d%H%S")
+            today = datetime.datetime.now().strftime("%Y%m%d")
             start2_path = '{}/start2.{}.json'.format(DATA_DIR, today)
             json.dump(start2, open(start2_path, 'w'))
         else:
