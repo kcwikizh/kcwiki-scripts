@@ -4,8 +4,6 @@ import time
 import traceback
 import requests
 from multiprocessing.dummy import Pool as ThreadPool
-
-from lib.commands.update import update_ships
 from lib.services.ship import ShipService
 from lib.common.config import CONFIG
 from lib.common.utils import has_keys, convert_voice_filename, Echo as echo
@@ -22,7 +20,6 @@ class VoiceService(object):
         self.root = CONFIG['voice_cache']
 
     def download(self):
-        update_ships()
         queue = []
         for ship in self.ships:
             if has_keys(ship, 'filename', 'sort_no') and ship['sort_no'] > 0:

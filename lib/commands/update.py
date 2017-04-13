@@ -33,9 +33,9 @@ def update_ships():
     with open('data/ship.json', 'w') as f:
         json.dump(results, f)
     if len(results) > 0:
-        click.echo('update ship data success!')
+        echo.info('update ship data success!')
     else:
-        click.echo('no data')
+        echo.warn('no data')
 
 
 @update_cmd.command(name='update:ships')

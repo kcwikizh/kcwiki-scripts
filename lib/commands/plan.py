@@ -3,6 +3,7 @@ import click
 import time
 import traceback
 
+from lib.commands.update import update_ships
 from lib.services.revise import ReviseService
 from .fetch import fetch_start2_ooi
 from ..common.utils import Echo as echo
@@ -20,6 +21,7 @@ def plan(ctx):
     """job scheduling"""
     fetch_start2_ooi()
     schedule.every().hour.do(fetch_start2_ooi)
+    schedule.every().minute.do(update_ships)
     schedule.every().day.at('05:00').do(task_update_subtitle)
     schedule.every().hour.do(task_revise)
     while True:
