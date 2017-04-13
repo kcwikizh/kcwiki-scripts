@@ -3,6 +3,17 @@ Some scripts for kcwiki routine maintenance
 
 ## Usage
 
+### 定时任务
+
+运行与 crontab 类似的定时任务(前台)： `python main.py plan`
+
+默认包含的任务有：
+
++ 更新 start2 数据
++ 更新字幕
++ 更新本地舰船数据
++ 更新 revise 数据
+
 ### 更新字幕
 + 更新前需要使用更新舰船命令： `python main.py update:ships`
 + 更新字幕（仅运行，不部署到线上）： `python main.py update:subtitles`
