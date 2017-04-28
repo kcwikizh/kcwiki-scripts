@@ -21,7 +21,7 @@ class SubtitleService(object):
         self.ships = self.ship_service.get()
         self.ships = self.ships[:800]
         self.kaiship = self.ship_service.get_kai_set()
-        self.subtitles = {'zh': {}, 'jp': {}, 'distinct': {'zh': {}, 'jp': {}}}
+        self.subtitles = self._get_data_struct()
         self.missing = []
 
     def get(self, mode="all"):
@@ -62,14 +62,15 @@ class SubtitleService(object):
 
     def get_cache(self):
         self.clean()
-        zh = json.load(open(path.join(DATA_DIR, 'subtitles.json'), 'r'))
-        jp = json.load(open(path.join(DATA_DIR, 'subtitlesJP.json'), 'r'))
-        distinct = json.load(open(path.join(DATA_DIR, 'subtitles_distinct.json'), 'r'))
-        self.subtitles = {'zh': zh, 'jp': jp, 'distinct': distinct}
+        self.subtitles = self._get_data_struct()
+        self.subtitles['zh'] = json.load(open(path.join(DATA_DIR, 'subtitles.json'), 'r'))
+        self.subtitles['jp'] = json.load(open(path.join(DATA_DIR, 'subtitlesJP.json'), 'r'))
+        self.subtitles['distinct'] = json.load(open(path.join(DATA_DIR, 'subtitles_distinct.json'), 'r'))
+        self.subtitles['seasonal'] = json.load(open(path.join(DATA_DIR, 'subtitles_seasonal.json'), 'r'))
         return self.subtitles
 
     def clean(self):
-        self.subtitles = {'zh': {}, 'jp': {}, 'distinct': {'zh': {}, 'jp': {}}}
+        self.subtitles = self._get_data_struct()
         self.missing = []
 
     def _handle(self, ship):
@@ -114,12 +115,14 @@ class SubtitleService(object):
         json.dump(subtitles['zh'], open(path.join(DATA_DIR, 'subtitles.json'), 'w'))
         json.dump(subtitles['jp'], open(path.join(DATA_DIR, 'subtitlesJP.json'), 'w'))
         json.dump(subtitles['distinct'], open(path.join(DATA_DIR, 'subtitles_distinct.json'), 'w'))
+        json.dump(subtitles['seasonal'], open(path.join(DATA_DIR, 'subtitles_seasonal.json'), 'w'))
         env = CONFIG['env']
         deploy_filename = now + '.json'
         deploy_dir = CONFIG[env]['subtitle']
         copyfile(path.join(DATA_DIR, 'subtitles.json'), path.join(deploy_dir, 'zh-cn', deploy_filename))
         copyfile(path.join(DATA_DIR, 'subtitlesJP.json'), path.join(deploy_dir, 'jp', deploy_filename))
         copyfile(path.join(DATA_DIR, 'subtitles_distinct.json'), path.join(deploy_dir, 'subtitles_distinct.json'))
+        copyfile(path.join(DATA_DIR, 'subtitles_seasonal.json'), path.join(deploy_dir, 'subtitles_seasonal.json'))
         meta_file = path.join(deploy_dir, 'meta.json')
         meta = json.load(open(meta_file, 'r'))
         meta['latest'] = deploy_filename[:-5]
@@ -213,18 +216,15 @@ class SubtitleService(object):
             name = ship['name']
             after_ship_id = int(ship['after_ship_id'])
             echo.info('{} {} {} {}'.format(ship_id, name, quote, voice_no))
-            if ship_id not in self.subtitles[lang]:
-                self.subtitles[lang][ship_id] = {}
-            self.subtitles[lang][ship_id][voice_no] = quote
+            self._set_quote(self.subtitles, lang, ship_id, voice_no, quote)
+            self._set_quote(self.subtitles['seasonal'], lang, ship_id, voice_no, quote)
             loop_count = 0
             while after_ship_id > 0 and loop_count < 10:
                 loop_count += 1
                 ship = self.ships[after_ship_id]
                 ship_id = int(ship['id'])
                 after_ship_id = int(ship['after_ship_id'])
-                if ship_id not in self.subtitles[lang]:
-                    self.subtitles[lang][ship_id] = {}
-                self.subtitles[lang][ship_id][voice_no] = quote
+                self._set_quote(self.subtitles, lang, ship_id, voice_no, quote)
 
 
     @staticmethod
@@ -261,6 +261,16 @@ class SubtitleService(object):
                 voice_no = namemap[voice[0]]
             results.append((no, quote, voice_no))
         return results
+
+    @staticmethod
+    def _set_quote(subtitles, lang, ship_id, voice_no, quote):
+        if ship_id not in subtitles[lang]:
+            subtitles[lang][ship_id] = {}
+        subtitles[lang][ship_id][voice_no] = quote
+
+    @staticmethod
+    def _get_data_struct():
+        return {'zh': {}, 'jp': {}, 'distinct': {'zh': {}, 'jp': {}}, 'seasonal': {'zh': {}, 'jp': {}}}
 
 
 class SubtitleServiceError(Exception):
