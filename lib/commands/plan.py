@@ -41,5 +41,5 @@ def task_update_subtitle():
 
 
 def task_revise():
-    service = ReviseService('v3')
+    service = ReviseService('v3', False)
     service.handle()

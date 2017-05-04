@@ -8,7 +8,7 @@ from lib.common.config import CONFIG, DATA_DIR
 
 
 class ReviseService(object):
-    def __init__(self, version='v2'):
+    def __init__(self, version='v2', verbose=True):
         ship_service = ShipService()
         self.ships = ship_service.get()[:800]
         subtitle_service = SubtitleService()
@@ -16,6 +16,7 @@ class ReviseService(object):
         self.version = version
         self.voice_path = path.join(CONFIG['voice_cache'], 'sound')
         self.data_path = CONFIG['revise'][version]['data']
+        self.verbose = verbose
 
     def handle(self):
         version = self.version
@@ -79,7 +80,7 @@ class ReviseService(object):
             dst_url = dst_data['url'][voice_id_str]
             src_md5 = self._md5(voice_id, src_url)
             dst_md5 = self._md5(voice_id, dst_url)
-            if src_md5 != dst_md5 and len(src_md5) * len(dst_md5) > 0:
+            if src_md5 != dst_md5 and len(src_md5) * len(dst_md5) > 0 and self.verbose:
                 echo.info('{} {} - {}'.format(voice_id, src_md5, dst_md5))
             else:
                 if not has_keys(dst_data, 'same'):
