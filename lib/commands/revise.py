@@ -21,3 +21,12 @@ def revise_main(version='v3'):
     revise_service.handle()
 
 
+@revise_cmd.command(name="revise:test")
+@click.option('--id', '-i')
+def revice_test(id):
+    if not id:
+        print("Error: Argument 'ship id' is required")
+        return
+    revise_service = ReviseService()
+    revise_service.test_voice(id)
+

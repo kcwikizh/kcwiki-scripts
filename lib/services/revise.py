@@ -8,7 +8,7 @@ from lib.common.config import CONFIG, DATA_DIR
 
 
 class ReviseService(object):
-    def __init__(self, version='v2', verbose=True):
+    def __init__(self, version='v3', verbose=True):
         ship_service = ShipService()
         self.ships = ship_service.get()[:800]
         subtitle_service = SubtitleService()
@@ -17,6 +17,24 @@ class ReviseService(object):
         self.voice_path = path.join(CONFIG['voice_cache'], 'sound')
         self.data_path = CONFIG['revise'][version]['data']
         self.verbose = verbose
+
+    def test_voice(self, ship_id):
+        ship_id = int(ship_id)
+        for ship in self.ships:
+            if not has_keys(ship, 'filename', 'sort_no') or ship['sort_no'] <= 0:
+                continue
+            if int(ship['id']) != ship_id:
+                continue
+            name = ship['name']
+            filename = ship['filename']
+            echo.info('测试【{}】的语音文件情况'.format(name))
+            for i in range(53):
+                voice_id = convert_voice_filename(ship_id, i + 1)
+                mp3_path = '{}/kc{}/{}.mp3'.format(self.voice_path, filename, voice_id)
+                if path.exists(mp3_path):
+                    echo.info('#{} 文件存在'.format(voice_id))
+                else:
+                    echo.error('#{} 文件不存在, 路径:{}'.format(voice_id, mp3_path))
 
     def handle(self):
         version = self.version
