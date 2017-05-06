@@ -23,6 +23,7 @@ class VoiceService(object):
         queue = []
         for ship in self.ships:
             if has_keys(ship, 'filename', 'sort_no') and ship['sort_no'] > 0:
+                echo.info(ship['name'])
                 ship_id = ship['id']
                 ship_filename = ship['filename']
                 voice_dir = os.path.join(self.root, 'sound/kc{}/'.format(ship_filename))

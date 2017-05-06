@@ -32,9 +32,10 @@ class ReviseService(object):
                 voice_id = convert_voice_filename(ship_id, i + 1)
                 mp3_path = '{}/kc{}/{}.mp3'.format(self.voice_path, filename, voice_id)
                 if path.exists(mp3_path):
-                    echo.info('#{} 文件存在'.format(voice_id))
+                    echo.info('#{} 文件存在'.format(i+1))
                 else:
-                    echo.error('#{} 文件不存在, 路径:{}'.format(voice_id, mp3_path))
+                    echo.error('#{} 文件不存在, 路径:{}'.format(i+1, mp3_path))
+                    echo.error('目标URL: http://125.6.189.215/kcs/sound/kc{}/{}.mp3'.format(filename, voice_id))
 
     def handle(self):
         version = self.version
