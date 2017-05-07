@@ -1,4 +1,4 @@
-data/*.json
+data/
 !data/namemap.json
 *.yaml
 __pycache__

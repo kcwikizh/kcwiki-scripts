@@ -26,3 +26,6 @@ Some scripts for kcwiki routine maintenance
 ### 更新 start2 数据
 + 更新 start2 数据并上传到服务器： `python main.py fetch:start2`
 
+### 解包
++ 下载并反混淆 Core.swf : `python main.py decompile`
++ 下载并解包 BattleMain.swf(需要 ffdec): `python main.py battle:swf`
