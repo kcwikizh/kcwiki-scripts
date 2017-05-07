@@ -151,7 +151,7 @@ class SubtitleService(object):
             quote = re.sub(r'<br.*?>', '', quote)
             quote = re.sub(r'<(.*)>.*?</\1>', '', quote)
             quote = quote.replace('\n', '')
-            if not quote or quote == ' ':
+            if not quote.strip():
                 quote = 'このサブタイトルに対応するサブタイトルがありません！艦これ中国語ウィキ（https://zh.kcwiki.moe/）に参加して、この内容を一緒に完成しましょう！' if lang == 'jp' else '本字幕暂时没有翻译 请到舰娘百科(https://zh.kcwiki.moe/)协助我们翻译'
             no = filename.split('-')[0].strip()
             if filename.split('-')[1] in namemap:
@@ -248,7 +248,7 @@ class SubtitleService(object):
                 continue
             quote = re.sub(r'<br.*?>', '', quote).strip()
             quote = re.sub(r'<(.*)>.*?</\1>', '', quote)
-            if not quote or quote == ' ':
+            if not quote.strip():
                 quote = 'このサブタイトルに対応するサブタイトルがありません！艦これ中国語ウィキ（https://zh.kcwiki.moe/）に参加して、この内容を一緒に完成しましょう！' if lang == 'jp' else '本字幕暂时没有翻译 请到舰娘百科(https://zh.kcwiki.moe/)协助我们翻译'
             no = filename.split('-')[0]
             namemap = json.load(open(path.join(DATA_DIR, 'namemap.json'), 'r'))
