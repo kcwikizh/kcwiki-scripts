@@ -1,3 +1,4 @@
+import json
 import click
 
 
@@ -22,6 +23,10 @@ def has_keys(dictionary, *args):
         if key not in dictionary:
             return False
     return True
+
+
+def json_pretty_dump(obj, fd):
+    json.dump(obj, fd, ensure_ascii=False, indent=4, separators=[',', ':'])
 
 vcKey = [604825, 607300, 613847, 615318, 624009, 631856, 635451, 637218,
          640529, 643036, 652687, 658008, 662481, 669598, 675545, 685034,

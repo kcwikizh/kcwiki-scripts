@@ -5,7 +5,9 @@ import requests
 import re
 import json
 import datetime
-from ..common.utils import Echo as echo
+
+from lib.services.subtitle import SubtitleService
+from ..common.utils import Echo as echo, json_pretty_dump
 from ..common.utils import USER_AGENT
 from ..common.config import CONFIG, DATA_DIR
 
@@ -15,6 +17,18 @@ UTF8 = 'utf-8'
 @click.group()
 def fetch_cmd():
     pass
+
+
+@fetch_cmd.command(name="fetch:subtitles")
+@click.argument('name')
+def command_fetch_subtitle(name):
+    service = SubtitleService()
+    if name:
+        data = service.get_by_ship(name)
+        json_pretty_dump(data, open('./data/test.json', 'w'))
+        click.echo('Quote data saved in ./data/test.json')
+    else:
+        click.echo('Ship name is required.')
 
 
 @fetch_cmd.command(name="fetch:start2")

@@ -179,13 +179,12 @@ class SubtitleService(object):
             return
         ship_kai = self.ships[after_ship_id]
         ship_kai_id = int(ship_kai['id'])
-        ship_kai_sort_no = int(ship_kai['sort_no'])
+        ship_kai_wiki_id = ship_kai['wiki_id']
         subtitles_kai = subtitles.copy()
         self.subtitles['distinct'][lang][ship_kai_id] = {}
         echo.info('读取【{}】的翻译'.format(ship_kai['name']))
         for no, mp3, quote in results:
-            if no.endswith('a') and int(no[:-1]) == sort_no \
-                    or not no.endswith('a') and int(no) == ship_kai_sort_no:
+            if ship_kai_wiki_id == str(no):
                 subtitles_kai[mp3] = quote
                 self.subtitles['distinct'][lang][ship_kai_id][mp3] = quote
         self.subtitles[lang][ship_kai_id] = subtitles_kai
@@ -194,15 +193,13 @@ class SubtitleService(object):
                 ship_kai_after_ship_id not in self.subtitles[lang]:
             ship_kai = self.ships[ship_kai_after_ship_id]
             ship_kai_id = int(ship_kai['id'])
-            ship_kai_sort_no = int(ship_kai['sort_no'])
             ship_kai_after_ship_id = int(ship_kai['after_ship_id'])
+            ship_kai_wiki_id = ship_kai['wiki_id']
             subtitles_kai = subtitles_kai.copy()
             self.subtitles['distinct'][lang][ship_kai_id] = {}
             echo.info('读取【{}】的翻译'.format(ship_kai['name']))
             for no, mp3, quote in results:
-                if no.endswith('a'):
-                    continue
-                if int(no) == ship_kai_sort_no:
+                if ship_kai_wiki_id == str(no):
                     subtitles_kai[mp3] = quote
                     self.subtitles['distinct'][lang][ship_kai_id][mp3] = quote
                 self.subtitles[lang][ship_kai_id] = subtitles_kai
