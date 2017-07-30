@@ -29,3 +29,6 @@ Some scripts for kcwiki routine maintenance
 ### 解包
 + 下载并反混淆 Core.swf : `python main.py decompile`
 + 下载并解包 BattleMain.swf(需要 ffdec): `python main.py battle:swf`
+
+### 头像
++ 抓取 Twitter 头像 : `python main.py fetch:avatar`
