@@ -58,6 +58,7 @@ class SubtitleService(object):
         for page in pages:
             self._handle_seasonal(page, 'zh')
             self._handle_seasonal(page, 'jp')
+        self._convert_to_traditional()
         return self.subtitles
 
     def get_cache(self):
@@ -112,8 +113,10 @@ class SubtitleService(object):
         now = datetime.datetime.now().strftime('%Y%m%d%H')
         subtitles['zh']['version'] = now
         subtitles['jp']['version'] = now
+        subtitles['tw']['version'] = now
         json.dump(subtitles['zh'], open(path.join(DATA_DIR, 'subtitles.json'), 'w'))
         json.dump(subtitles['jp'], open(path.join(DATA_DIR, 'subtitlesJP.json'), 'w'))
+        json.dump(subtitles['tw'], open(path.join(DATA_DIR, 'subtitlesTW.json'), 'w'))
         json.dump(subtitles['distinct'], open(path.join(DATA_DIR, 'subtitles_distinct.json'), 'w'))
         json.dump(subtitles['seasonal'], open(path.join(DATA_DIR, 'subtitles_seasonal.json'), 'w'))
         env = CONFIG['env']
@@ -121,6 +124,7 @@ class SubtitleService(object):
         deploy_dir = CONFIG[env]['subtitle']
         copyfile(path.join(DATA_DIR, 'subtitles.json'), path.join(deploy_dir, 'zh-cn', deploy_filename))
         copyfile(path.join(DATA_DIR, 'subtitlesJP.json'), path.join(deploy_dir, 'jp', deploy_filename))
+        copyfile(path.join(DATA_DIR, 'subtitlesTW.json'), path.join(deploy_dir, 'zh-tw', deploy_filename))
         copyfile(path.join(DATA_DIR, 'subtitles_distinct.json'), path.join(deploy_dir, 'subtitles_distinct.json'))
         copyfile(path.join(DATA_DIR, 'subtitles_seasonal.json'), path.join(deploy_dir, 'subtitles_seasonal.json'))
         meta_file = path.join(deploy_dir, 'meta.json')
@@ -225,7 +229,6 @@ class SubtitleService(object):
                 after_ship_id = int(ship['after_ship_id'])
                 self._set_quote(self.subtitles, lang, ship_id, voice_no, quote)
 
-
     @staticmethod
     def _post_process_seasonal(content, lang='zh'):
         """ 季节性字幕的后处理 """
@@ -261,6 +264,27 @@ class SubtitleService(object):
             results.append((no, quote, voice_no))
         return results
 
+    def _convert_to_traditional(self):
+        text = json.dumps(self.subtitles['zh'], ensure_ascii=False)
+        url = CONFIG['wiki_url']
+        payload = {
+            'action': 'parse', 'contentmodel': 'wikitext',
+            'format': 'json', 'uselang': 'zh-tw', 'text': text
+        }
+        rep = requests.post(url, payload)
+        if rep.ok:
+            text = rep.json()['parse']['text']['*']
+            match = re.search(r'<p>(.*?)</p>', text, re.DOTALL)
+            if match:
+                content = match.group(1).strip()
+            else:
+                raise SubtitleServiceError('convert_to_traditional: extract converted data failed')
+            content = re.sub(r'<.*?/>', '', content)
+            content = re.sub(r'<.*?>', '', content)
+            self.subtitles['tw'] = json.loads(content)
+        else:
+            raise SubtitleServiceError('Fetch traditional converted data failed: {}'.format(rep.status_code))
+
     @staticmethod
     def _set_quote(subtitles, lang, ship_id, voice_no, quote):
         if ship_id not in subtitles[lang]:
@@ -269,7 +293,7 @@ class SubtitleService(object):
 
     @staticmethod
     def _get_data_struct():
-        return {'zh': {}, 'jp': {}, 'distinct': {'zh': {}, 'jp': {}}, 'seasonal': {'zh': {}, 'jp': {}}}
+        return {'zh': {}, 'jp': {}, 'tw': {}, 'distinct': {'zh': {}, 'jp': {}}, 'seasonal': {'zh': {}, 'jp': {}}}
 
 
 class SubtitleServiceError(Exception):

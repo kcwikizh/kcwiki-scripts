@@ -64,6 +64,7 @@ def update_subtitles(ctx, mode, scope):
         subtitles['jp']['version'] = now
         json.dump(subtitles['zh'], open(path.join(DATA_DIR, 'subtitles.json'), 'w'))
         json.dump(subtitles['jp'], open(path.join(DATA_DIR, 'subtitlesJP.json'), 'w'))
+        json.dump(subtitles['tw'], open(path.join(DATA_DIR, 'subtitlesTW.json'), 'w'))
         json.dump(subtitles['distinct'], open(path.join(DATA_DIR, 'subtitles_distinct.json'), 'w'))
     elif mode == 'deploy':
         service.deploy()
