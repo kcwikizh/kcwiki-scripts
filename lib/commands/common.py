@@ -22,7 +22,7 @@ def list_ships():
 
 @common_cmd.command('convert')
 def convert():
-    """测试: 将简体中文字幕转换为繁体"""
+    """Convert quotes from zh-cn to zh-tw"""
     import requests
     host = 'https://zh.kcwiki.org/api.php'
     payload = {

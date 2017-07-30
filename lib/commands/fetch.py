@@ -6,6 +6,7 @@ import re
 import json
 import datetime
 
+from lib.services.avatar import AvatarService
 from lib.services.subtitle import SubtitleService
 from ..common.utils import Echo as echo, json_pretty_dump
 from ..common.utils import USER_AGENT
@@ -17,6 +18,12 @@ UTF8 = 'utf-8'
 @click.group()
 def fetch_cmd():
     pass
+
+
+@fetch_cmd.command(name="fetch:avatar")
+def command_fetch_avatar():
+    """Fetch kancolle twitter avatar"""
+    AvatarService.do()
 
 
 @fetch_cmd.command(name="fetch:subtitles")
