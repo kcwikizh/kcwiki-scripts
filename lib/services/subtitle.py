@@ -76,8 +76,8 @@ class SubtitleService(object):
 
     def _handle(self, ship):
         """ 抓取舰娘页面获取字幕数据的逻辑 """
-        if not has_keys(ship, 'id', 'name', 'chinese_name') \
-                or int(ship['id']) in self.kaiship:
+        if not has_keys(ship, 'id', 'name', 'chinese_name', 'wiki_id') \
+                or int(ship['id']) in self.kaiship or ship['wiki_id'] is None:
             debug('skipped: {}'.format(ship))
             return
         title = ship['chinese_name']
