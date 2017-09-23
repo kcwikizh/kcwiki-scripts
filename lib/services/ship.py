@@ -29,7 +29,7 @@ class ShipService(object):
         ships = self.ships
         kaiship = set()
         for ship in ships:
-            if has_keys(ship, 'after_ship_id'):
+            if has_keys(ship, 'after_ship_id') and ship['after_ship_id'] is not None:
                 kaiship.add(int(ship['after_ship_id']))
         return kaiship
 
