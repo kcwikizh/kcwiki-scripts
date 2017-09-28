@@ -73,7 +73,7 @@ class ReviseService(object):
             json.dump(result, open(path.join(data_path, '{}.json'.format(ship_id)), 'w'))
         json.dump(results, open(path.join(DATA_DIR, 'revise.json'), 'w'))
         for ship in self.ships:
-            if not has_keys(ship, 'name', 'after_ship_id'):
+            if not has_keys(ship, 'name', 'after_ship_id') and ship['after_ship_id'] is not None:
                 continue
             name = ship['name']
             after_ship_id = int(ship['after_ship_id'])
