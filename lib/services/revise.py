@@ -100,7 +100,7 @@ class ReviseService(object):
             src_md5 = self._md5(voice_id, src_url)
             dst_md5 = self._md5(voice_id, dst_url)
             if src_md5 != dst_md5 and len(src_md5) * len(dst_md5) > 0 and self.verbose:
-                echo.info('{} {} - {}'.format(voice_id, src_md5, dst_md5))
+                pass
             else:
                 if not has_keys(dst_data, 'same'):
                     dst_data['same'] = {}
