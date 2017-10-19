@@ -5,7 +5,9 @@ import requests
 import re
 import json
 import datetime
+import traceback
 
+from pyquery import PyQuery as pq
 from lib.services.avatar import AvatarService
 from lib.services.subtitle import SubtitleService
 from ..common.utils import Echo as echo, json_pretty_dump
@@ -36,6 +38,22 @@ def command_fetch_subtitle(name):
         click.echo('Quote data saved in ./data/test.json')
     else:
         click.echo('Ship name is required.')
+
+
+@fetch_cmd.command(name="fetch:twitter:info")
+def command_fetch_twitter_info():
+    """Fetch twitter account info"""
+    try:
+        click.echo('Twitter;info - fetching twitter account info...')
+        raw = requests.get(CONFIG['twitter']['url']).content
+        dom = pq(raw)
+        with open(CONFIG['twitter']['info_path'], 'w') as fd:
+            name = dom('.ProfileHeaderCard-nameLink').text()
+            click.echo('Twitter:info - twitter name of official kancolle is : {}'.format(name))
+            json.dump({'name': name}, fd)
+    except Exception:
+        click.echo('[ERROR]: Fetch twitter info failed.')
+        traceback.print_exc()
 
 
 @fetch_cmd.command(name="fetch:start2")

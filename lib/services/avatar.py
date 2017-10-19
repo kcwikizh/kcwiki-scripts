@@ -20,7 +20,7 @@ class AvatarService(object):
         FILE_NAME = 'KanColleStaffAvatar'
         THUMB_NAME = 'KanColleStaffAvatarThumb'
 
-        content = requests.get('https://twitter.com/KanColle_STAFF').content
+        content = requests.get(CONFIG['twitter']['url']).content
         avatar = pq(content)('.ProfileAvatar-image')
         avatar_thumb = pq(content)('.stream-item-header .avatar')[0]
         click.echo('Twitter avatar url: 【{}】'.format(avatar.attr('src')))

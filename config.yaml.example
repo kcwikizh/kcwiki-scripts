@@ -2,6 +2,10 @@ debug: true
 env: production
 log: '/tmp/kcwiki-scripts.log'
 wiki_url: 'https://zh.kcwiki.org/api.php'
+twitter:
+    url: 'https://twitter.com/KanColle_STAFF'
+    save_dir: '/some/path'
+    dupli_dir: '/some/path'
 local:
     subtitle: '/some/path'
 production:
