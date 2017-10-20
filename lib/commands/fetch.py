@@ -43,6 +43,16 @@ def command_fetch_subtitle(name):
 @fetch_cmd.command(name="fetch:twitter:info")
 def command_fetch_twitter_info():
     """Fetch twitter account info"""
+    fetch_twitter_info()
+
+
+@fetch_cmd.command(name="fetch:start2")
+def command_fetch_start2():
+    """fetch start2 json data (ooi support)"""
+    fetch_start2_ooi()
+
+
+def fetch_twitter_info():
     try:
         click.echo('Twitter;info - fetching twitter account info...')
         raw = requests.get(CONFIG['twitter']['url']).content
@@ -54,12 +64,6 @@ def command_fetch_twitter_info():
     except Exception:
         click.echo('[ERROR]: Fetch twitter info failed.')
         traceback.print_exc()
-
-
-@fetch_cmd.command(name="fetch:start2")
-def command_fetch_start2():
-    """fetch start2 json data (ooi support)"""
-    fetch_start2_ooi()
 
 
 def fetch_start2_ooi():
