@@ -7,7 +7,7 @@ from os import path
 from lib.common.config import DATA_DIR
 from lib.common.utils import Echo as echo
 from lib.services.api import KcwikiApi as Api
-from lib.services.subtitle import SubtitleService
+from lib.services.subtitle import SubtitleService, EnglishSubtitleParser
 
 
 @click.group()

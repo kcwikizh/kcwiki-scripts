@@ -16,6 +16,7 @@ class ShipService(object):
         self.ships = self.ships[:800]
         self.name_map = {}
         self.wiki_id_map = {}
+        self.sort_no_map = {}
         for ship in self.ships:
             if has_keys(ship, 'name'):
                 self.name_map[ship['name']] = ship
@@ -23,6 +24,8 @@ class ShipService(object):
                 self.name_map[ship['chinese_name']] = ship
             if has_keys(ship, 'wiki_id'):
                 self.wiki_id_map[ship['wiki_id']] = ship
+            if has_keys(ship, 'sort_no'):
+                self.sort_no_map[ship['sort_no']] = ship
 
     def get_kai_set(self):
         """获取已改船的集合"""
@@ -33,17 +36,28 @@ class ShipService(object):
                 kaiship.add(int(ship['after_ship_id']))
         return kaiship
 
-    def get(self, name=None, wiki_id=None):
+    def get_origin_set(self):
+        """获取未改船集合"""
+        all_ship_set = set([ship['id'] for ship in self.ships if has_keys(ship, 'id', 'wiki_id')])
+        kai_ship_set = self.get_kai_set()
+        return all_ship_set - kai_ship_set
+
+    def get(self, name=None, wiki_id=None, sort_no=None):
         if name is not None:
             if name in self.name_map:
                 return self.name_map[name]
             else:
-                raise ShipServiceError('{} is not exist in ship data'.format(name))
+                raise ShipServiceError('Ship "{}" not found'.format(name))
         elif wiki_id is not None:
             if wiki_id in self.wiki_id_map:
                 return self.wiki_id_map[wiki_id]
             else:
-                raise ShipServiceError('{} is not exist in ship data'.format(name))
+                raise ShipServiceError('Ship (wiki id: {}) not found'.format(wiki_id))
+        elif sort_no is not None:
+            if sort_no in self.sort_no_map:
+                return self.sort_no_map[sort_no]
+            else:
+                raise ShipServiceError('Ship (sort no: {}) not found'.format(sort_no))
         return self.ships
 
     @staticmethod

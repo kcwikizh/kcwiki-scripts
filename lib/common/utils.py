@@ -41,4 +41,6 @@ def convert_voice_filename(ship_id, voice_id):
     return (ship_id + 7) * 17 * (vcKey[voice_id] - vcKey[voice_id - 1])\
         % 99173 + 100000
 
+
+
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'
