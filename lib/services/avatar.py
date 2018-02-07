@@ -8,6 +8,7 @@ import click
 import requests
 from moebot import MwApi
 from PIL import Image
+from weibo import Client
 
 from lib.common.config import CONFIG
 
@@ -57,7 +58,10 @@ class AvatarService(object):
             pathTimestamp = ''.join([DUPLI_SAVE_DIR, '/',
                                      oriname, '.', suffix])
             filename = ''.join([FILE_NAME, today, '.', suffix])
-            AvatarService._upload(pathTimestamp, filename)
+            rep = AvatarService._upload(pathTimestamp, filename)
+            if rep['success']:
+                click.echo('微博更新头像……')
+                AvatarService._weibo_share(''.join([SAVE_DIR, '/', FILE_NAME, '.', suffix]))
             archives = [x.split('/')[-1] for x in list(glob("{}/KanColleStaffAvatar*.png".format(DUPLI_SAVE_DIR)))]
             archives = sorted(archives)
             json.dump(archives, open('{}/archives.json'.format(DUPLI_SAVE_DIR), 'w'))
@@ -79,5 +83,15 @@ class AvatarService(object):
         password = CONFIG['account']['password']
         mw.login(username, password)
         click.echo(u'正在上传头像图片...')
-        mw.upload(filepath, filename)
+        return mw.upload(filepath, filename)
+
+    @staticmethod
+    def _weibo_share(image_path):
+        weibo = CONFIG['weibo']
+        weibo_client = Client(weibo['api_key'], weibo['api_secret'], weibo['redirect_url'],
+                              username=weibo['username'], password=weibo['password'])
+        with open(image_path, 'rb') as pic:
+            weibo_client.post('statuses/share', status='「艦これ」開発/運営 头像更新 https://zh.kcwiki.org', pic=pic)
+
+
 
