@@ -65,7 +65,8 @@ class SubtitleService(object):
             self._handle_seasonal(page, 'zh')
             self._handle_seasonal(page, 'jp')
         self._convert_to_traditional()
-        self.subtitles['en'] = self.english_parser.perform()
+        if CONFIG['subtitle']['english']:
+            self.subtitles['en'] = self.english_parser.perform()
         return self.subtitles
 
     def get_cache(self):
@@ -125,7 +126,8 @@ class SubtitleService(object):
         json.dump(subtitles['zh'], open(path.join(DATA_DIR, 'subtitles.json'), 'w'))
         json.dump(subtitles['jp'], open(path.join(DATA_DIR, 'subtitlesJP.json'), 'w'))
         json.dump(subtitles['tw'], open(path.join(DATA_DIR, 'subtitlesTW.json'), 'w'))
-        json.dump(subtitles['en'], open(path.join(DATA_DIR, 'subtitlesEN.json'), 'w'))
+        if CONFIG['subtitle']['english']:
+            json.dump(subtitles['en'], open(path.join(DATA_DIR, 'subtitlesEN.json'), 'w'))
         json.dump(subtitles['distinct'], open(path.join(DATA_DIR, 'subtitles_distinct.json'), 'w'))
         json.dump(subtitles['seasonal'], open(path.join(DATA_DIR, 'subtitles_seasonal.json'), 'w'))
         env = CONFIG['env']
@@ -134,7 +136,8 @@ class SubtitleService(object):
         copyfile(path.join(DATA_DIR, 'subtitles.json'), path.join(deploy_dir, 'zh-cn', deploy_filename))
         copyfile(path.join(DATA_DIR, 'subtitlesJP.json'), path.join(deploy_dir, 'jp', deploy_filename))
         copyfile(path.join(DATA_DIR, 'subtitlesTW.json'), path.join(deploy_dir, 'zh-tw', deploy_filename))
-        copyfile(path.join(DATA_DIR, 'subtitlesEN.json'), path.join(deploy_dir, 'en', deploy_filename))
+        if CONFIG['subtitle']['english']:
+            copyfile(path.join(DATA_DIR, 'subtitlesEN.json'), path.join(deploy_dir, 'en', deploy_filename))
         copyfile(path.join(DATA_DIR, 'subtitles_distinct.json'), path.join(deploy_dir, 'subtitles_distinct.json'))
         copyfile(path.join(DATA_DIR, 'subtitles_seasonal.json'), path.join(deploy_dir, 'subtitles_seasonal.json'))
         meta_file = path.join(deploy_dir, 'meta.json')
