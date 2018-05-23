@@ -20,8 +20,8 @@ class AvatarService(object):
         DUPLI_SAVE_DIR = CONFIG['twitter']['dupli_dir']
         FILE_NAME = 'KanColleStaffAvatar'
         THUMB_NAME = 'KanColleStaffAvatarThumb'
-
-        content = requests.get(CONFIG['twitter']['url']).content
+        headers = {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'}
+        content = requests.get(CONFIG['twitter']['url'], headers=headers).content
         avatar = pq(content)('.ProfileAvatar-image')
         avatar_thumb = pq(content)('.stream-item-header .avatar')[0]
         click.echo('Twitter avatar url: 【{}】'.format(avatar.attr('src')))
