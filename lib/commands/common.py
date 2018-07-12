@@ -2,6 +2,9 @@ import click
 import json
 import os
 
+from lib.common.config import CONFIG
+from lib.services.avatar import AvatarService
+
 
 @click.group()
 def common_cmd():
@@ -45,4 +48,11 @@ def convert():
     data = json.loads(content)
     print(data['1'])
 
+
+@common_cmd.command('weibo:share')
+def weibo_share():
+    """推特头像微博分享测试命令"""
+    SAVE_DIR = CONFIG['twitter']['save_dir']
+    FILE_NAME = 'KanColleStaffAvatar'
+    AvatarService.weibo_share(''.join([SAVE_DIR, '/', FILE_NAME, '.png']))
 

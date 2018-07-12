@@ -61,7 +61,7 @@ class AvatarService(object):
             rep = AvatarService._upload(pathTimestamp, filename)
             if rep['success']:
                 click.echo('微博更新头像……')
-                AvatarService._weibo_share(''.join([SAVE_DIR, '/', FILE_NAME, '.', suffix]))
+                AvatarService.weibo_share(''.join([SAVE_DIR, '/', FILE_NAME, '.', suffix]))
             archives = [x.split('/')[-1] for x in list(glob("{}/KanColleStaffAvatar*.png".format(DUPLI_SAVE_DIR)))]
             archives = sorted(archives)
             json.dump(archives, open('{}/archives.json'.format(DUPLI_SAVE_DIR), 'w'))
@@ -86,7 +86,7 @@ class AvatarService(object):
         return mw.upload(filepath, filename)
 
     @staticmethod
-    def _weibo_share(image_path):
+    def weibo_share(image_path):
         weibo = CONFIG['weibo']
         weibo_client = Client(weibo['api_key'], weibo['api_secret'], weibo['redirect_url'],
                               username=weibo['username'], password=weibo['password'])
