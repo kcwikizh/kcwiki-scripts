@@ -91,7 +91,8 @@ class AvatarService(object):
         weibo_client = Client(weibo['api_key'], weibo['api_secret'], weibo['redirect_url'],
                               username=weibo['username'], password=weibo['password'])
         with open(image_path, 'rb') as pic:
-            weibo_client.post('statuses/share', status='「艦これ」開発/運営 头像更新 https://zh.kcwiki.org', pic=pic)
-
+            resp = weibo_client.post('statuses/share', status='「艦これ」開発/運営 头像更新 https://zh.kcwiki.org', pic=pic)
+            with open('/tmp/weibo_post_status.log', 'w') as fd:
+                fd.write(json.dumps(resp))
 
 
