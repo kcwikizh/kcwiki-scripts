@@ -20,7 +20,7 @@ def plan_cmd():
 def plan(ctx):
     """job scheduling"""
     fetch_start2_ooi()
-    schedule.every().hour.do(fetch_start2_ooi)
+    # schedule.every().hour.do(fetch_start2_ooi)
     schedule.every().hour.do(update_ships)
     schedule.every().day.at('05:00').do(task_update_subtitle)
     schedule.every().hour.do(fetch_twitter_info)
