@@ -25,7 +25,6 @@ class SubtitleService(object):
         self.ship_service = ShipService()
         self.english_parser = EnglishSubtitleParser()
         self.ships = self.ship_service.get()
-        self.ships = self.ships[:800]
         self.kaiship = self.ship_service.get_kai_set()
         self.subtitles = self._get_data_struct()
         self.missing = []
