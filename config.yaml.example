@@ -3,7 +3,35 @@ env: production
 log: '/tmp/kcwiki-scripts.log'
 wiki_url: 'https://zh.kcwiki.org/api.php'
 twitter:
-    url: 'https://twitter.com/KanColle_STAFF'
+    kancolle_url: 'https://twitter.com/KanColle_STAFF'
+    c2_url: 'https://twitter.com/C2_STAFF'
+    save_dir: '/some/path'
+    dupli_dir: '/some/path'
+local:
+    subtitle: '/some/path'
+production:
+    subtitle: '/some/path'
+voice_cache: '/tmp/kcs'
+revise:
+    v2:
+        url: 'http://revise.kcwiki.moe/cache/kcs/sound/kc{}/{}.mp3'
+        data: '/some/path'
+    v3:
+        url: 'http://voice.kcwiki.moe/kcs/sound/kc{}/{}.mp3'
+        data: '/some/path'
+account:
+    username: 'someuser'
+    password: 'somepassword'
+dmm_account:
+    username: 'someuser'
+    password: 'somepassword'
+api_password: 'somepassword'
+ooi_url: 'http://ooi.moe'
+quote_seasonal_page:
+    - '季节性/2017年白色情人节'
+
+
+
     save_dir: '/some/path'
     dupli_dir: '/some/path'
 local:

@@ -12,16 +12,30 @@ from weibo import Client
 
 from lib.common.config import CONFIG
 
+AVATAR_CONFIG_MAP = {
+    'kancolle': {
+        'url': CONFIG['twitter']['kancolle_url'],
+        'filename': 'KanColleStaffAvatar',
+        'thumbname': 'KanColleStaffAvatarThumb'
+    },
+    'c2': {
+        'url': CONFIG['twitter']['c2_url'],
+        'filename': 'C2StaffAvatar',
+        'thumbname': 'C2StaffAvatarThumb'
+    }
+}
+
+
 
 class AvatarService(object):
     @staticmethod
-    def do():
+    def do(src='kancolle'):
         SAVE_DIR = CONFIG['twitter']['save_dir']
         DUPLI_SAVE_DIR = CONFIG['twitter']['dupli_dir']
-        FILE_NAME = 'KanColleStaffAvatar'
-        THUMB_NAME = 'KanColleStaffAvatarThumb'
+        FILE_NAME = AVATAR_CONFIG_MAP[src]['filename']
+        THUMB_NAME = AVATAR_CONFIG_MAP[src]['thumbname']
         headers = {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'}
-        content = requests.get(CONFIG['twitter']['url'], headers=headers).content
+        content = requests.get(AVATAR_CONFIG_MAP[src]['url'], headers=headers).content
         avatar = pq(content)('.ProfileAvatar-image')
         avatar_thumb = pq(content)('.stream-item-header .avatar')[0]
         click.echo('Twitter avatar url: 【{}】'.format(avatar.attr('src')))
@@ -55,13 +69,14 @@ class AvatarService(object):
             AvatarService._save(image, DUPLI_SAVE_DIR, oriname, suffix)
             AvatarService._save(image, DUPLI_SAVE_DIR, oriname + 'Thumb', suffix)
             # 上传头像到Kcwiki
-            pathTimestamp = ''.join([DUPLI_SAVE_DIR, '/',
-                                     oriname, '.', suffix])
-            filename = ''.join([FILE_NAME, today, '.', suffix])
-            rep = AvatarService._upload(pathTimestamp, filename)
-            if rep['success']:
-                click.echo('微博更新头像……')
-                AvatarService.weibo_share(''.join([SAVE_DIR, '/', FILE_NAME, '.', suffix]))
+            if CONFIG['env'] != 'local' and src == 'kancolle':
+                pathTimestamp = ''.join([DUPLI_SAVE_DIR, '/',
+                                         oriname, '.', suffix])
+                filename = ''.join([FILE_NAME, today, '.', suffix])
+                rep = AvatarService._upload(pathTimestamp, filename)
+                if rep['success']:
+                    click.echo('微博更新头像……')
+                    AvatarService.weibo_share(''.join([SAVE_DIR, '/', FILE_NAME, '.', suffix]))
             archives = [x.split('/')[-1] for x in list(glob("{}/KanColleStaffAvatar*.png".format(DUPLI_SAVE_DIR)))]
             archives = sorted(archives)
             json.dump(archives, open('{}/archives.json'.format(DUPLI_SAVE_DIR), 'w'))
