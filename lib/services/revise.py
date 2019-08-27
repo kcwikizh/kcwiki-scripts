@@ -10,7 +10,7 @@ from lib.common.config import CONFIG, DATA_DIR
 class ReviseService(object):
     def __init__(self, version='v3', verbose=True):
         ship_service = ShipService()
-        self.ships = ship_service.get()[:800]
+        self.ships = ship_service.get()[:1500]
         subtitle_service = SubtitleService()
         self.subtitles = subtitle_service.get('cache')
         self.version = version
