@@ -15,11 +15,13 @@ from lib.common.config import CONFIG
 AVATAR_CONFIG_MAP = {
     'kancolle': {
         'url': CONFIG['twitter']['kancolle_url'],
+        'twitter_nickname': '「艦これ」開発/運営',
         'filename': 'KanColleStaffAvatar',
         'thumbname': 'KanColleStaffAvatarThumb'
     },
     'c2': {
         'url': CONFIG['twitter']['c2_url'],
+        'twitter_nickname': 'C2機関',
         'filename': 'C2StaffAvatar',
         'thumbname': 'C2StaffAvatarThumb'
     }
@@ -78,7 +80,7 @@ class AvatarService(object):
                 rep = AvatarService._upload(pathTimestamp, filename)
             if avatar_updated_flag:
                 click.echo('微博更新头像……')
-                AvatarService.weibo_share(''.join([SAVE_DIR, '/', FILE_NAME, '.', suffix]))
+                AvatarService.weibo_share(''.join([SAVE_DIR, '/', FILE_NAME, '.', suffix]), src)
             archives = [x.split('/')[-1] for x in list(glob("{}/KanColleStaffAvatar*.png".format(DUPLI_SAVE_DIR)))]
             archives = sorted(archives)
             json.dump(archives, open('{}/archives.json'.format(DUPLI_SAVE_DIR), 'w'))
@@ -103,12 +105,12 @@ class AvatarService(object):
         return mw.upload(filepath, filename)
 
     @staticmethod
-    def weibo_share(image_path):
+    def weibo_share(image_path, src):
         weibo = CONFIG['weibo']
         weibo_client = Client(weibo['api_key'], weibo['api_secret'], weibo['redirect_url'],
                               username=weibo['username'], password=weibo['password'])
         with open(image_path, 'rb') as pic:
-            resp = weibo_client.post('statuses/share', status='「艦これ」開発/運営 头像更新 https://zh.kcwiki.org', pic=pic)
+            resp = weibo_client.post('statuses/share', status='{} 头像更新 https://zh.kcwiki.org'.format(AVATAR_CONFIG_MAP[src]['twitter_nickname']), pic=pic)
             with open('/tmp/weibo_post_status.log', 'w') as fd:
                 fd.write(json.dumps(resp))
 
