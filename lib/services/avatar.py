@@ -51,6 +51,7 @@ class AvatarService(object):
             image_url_path = ''.join([SAVE_DIR, '/', 'image_url.txt'])
             image_url = ''.join(['http://static.kcwiki.moe/Avatar/',
                                  oriname, 'Thumb.', suffix])
+            avatar_updated_flag = False
             # 检测头像是否更新，如果没有更新，不进行存取操作
             if os.path.exists(path):
                 click.echo("Current avatar is newest.")
@@ -61,6 +62,7 @@ class AvatarService(object):
                 # 存取头像到指定目录
                 click.echo("Saving avatar...")
                 AvatarService._save(image, DUPLI_SAVE_DIR, FILE_NAME + today, suffix)
+                avatar_updated_flag = True
                 with open(image_url_path, 'w') as f:
                     f.write(image_url)
                 requests.get('http://api.kcwiki.moe/purge/avatar')
@@ -74,9 +76,9 @@ class AvatarService(object):
                                          oriname, '.', suffix])
                 filename = ''.join([FILE_NAME, today, '.', suffix])
                 rep = AvatarService._upload(pathTimestamp, filename)
-                if rep['success']:
-                    click.echo('微博更新头像……')
-                    AvatarService.weibo_share(''.join([SAVE_DIR, '/', FILE_NAME, '.', suffix]))
+            if avatar_updated_flag:
+                click.echo('微博更新头像……')
+                AvatarService.weibo_share(''.join([SAVE_DIR, '/', FILE_NAME, '.', suffix]))
             archives = [x.split('/')[-1] for x in list(glob("{}/KanColleStaffAvatar*.png".format(DUPLI_SAVE_DIR)))]
             archives = sorted(archives)
             json.dump(archives, open('{}/archives.json'.format(DUPLI_SAVE_DIR), 'w'))

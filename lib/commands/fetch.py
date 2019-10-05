@@ -23,9 +23,10 @@ def fetch_cmd():
 
 
 @fetch_cmd.command(name="fetch:avatar")
-def command_fetch_avatar():
+@fetch_cmd.option("--twitter", default="kancolle", help="Twitter account which will be fetched")
+def command_fetch_avatar(twitter):
     """Fetch kancolle twitter avatar"""
-    AvatarService.do()
+    AvatarService.do(src=twitter)
 
 
 @fetch_cmd.command(name="fetch:subtitles")
