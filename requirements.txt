@@ -27,5 +27,5 @@ six==1.11.0
 thefuck==3.16
 tqdm==4.19.5
 twine==1.9.1
-urllib3==1.22
+urllib3==1.24.2
 weibo==0.2.2
