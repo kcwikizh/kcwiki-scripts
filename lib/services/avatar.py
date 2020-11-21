@@ -11,6 +11,7 @@ from PIL import Image
 from weibo import Client
 
 from lib.common.config import CONFIG
+from lib.common.utils import Echo as echo
 
 AVATAR_CONFIG_MAP = {
     'kancolle': {
@@ -56,13 +57,13 @@ class AvatarService(object):
             avatar_updated_flag = False
             # 检测头像是否更新，如果没有更新，不进行存取操作
             if os.path.exists(path):
-                click.echo("Current avatar is newest.")
+                echo.info("Current avatar is newest.")
                 if not os.path.exists(image_url_path):
                     with open(image_url_path, 'w') as f:
                         f.write(image_url)
             else:
                 # 存取头像到指定目录
-                click.echo("Saving avatar...")
+                echo.info("Saving avatar...")
                 AvatarService._save(image, DUPLI_SAVE_DIR, FILE_NAME + today, suffix)
                 avatar_updated_flag = True
                 with open(image_url_path, 'w') as f:
@@ -79,13 +80,13 @@ class AvatarService(object):
                 filename = ''.join([FILE_NAME, today, '.', suffix])
                 rep = AvatarService._upload(pathTimestamp, filename)
             if avatar_updated_flag:
-                click.echo('微博更新头像……')
+                echo.info('微博更新头像……')
                 AvatarService.weibo_share(''.join([SAVE_DIR, '/', FILE_NAME, '.', suffix]), src)
             archives = [x.split('/')[-1] for x in list(glob("{}/KanColleStaffAvatar*.png".format(DUPLI_SAVE_DIR)))]
             archives = sorted(archives)
             json.dump(archives, open('{}/archives.json'.format(DUPLI_SAVE_DIR), 'w'))
         else:
-            click.echo('Can not find kancolle_staff avatar')
+            echo.error('Can not find kancolle_staff avatar')
 
     @staticmethod
     def _save(image, dir_, name, suffix):
@@ -101,7 +102,7 @@ class AvatarService(object):
         username = CONFIG['account']['username']
         password = CONFIG['account']['password']
         mw.login(username, password)
-        click.echo(u'正在上传头像图片...')
+        echo.info('正在上传头像图片...')
         return mw.upload(filepath, filename)
 
     @staticmethod
