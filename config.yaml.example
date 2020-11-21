@@ -3,10 +3,12 @@ env: production
 log: '/tmp/kcwiki-scripts.log'
 wiki_url: 'https://zh.kcwiki.org/api.php'
 twitter:
-    kancolle_url: 'https://twitter.com/KanColle_STAFF'
-    c2_url: 'https://twitter.com/C2_STAFF'
+    kancolle_screen_name: 'KanColle_STAFF'
+    c2_screen_name: 'C2_STAFF'
     save_dir: '/some/path'
     dupli_dir: '/some/path'
+    # See https://developer.twitter.com/en/docs/authentication/oauth-2-0
+    bearer_token : 'sometoken'
 local:
     subtitle: '/some/path'
 production:

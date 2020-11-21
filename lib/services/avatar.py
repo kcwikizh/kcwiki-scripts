@@ -4,7 +4,6 @@ import datetime
 from glob import glob
 from io import BytesIO
 from pyquery import PyQuery as pq
-import click
 import requests
 from moebot import MwApi
 from PIL import Image
@@ -14,14 +13,16 @@ from lib.common.config import CONFIG
 from lib.common.utils import Echo as echo
 
 AVATAR_CONFIG_MAP = {
+    # https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/follow-search-get-users/api-reference/get-users-show
+    'api': 'https://api.twitter.com/1.1/users/show.json',
     'kancolle': {
-        'url': CONFIG['twitter']['kancolle_url'],
+        'screen_name': CONFIG['twitter']['kancolle_screen_name'],
         'twitter_nickname': '「艦これ」開発/運営',
         'filename': 'KanColleStaffAvatar',
         'thumbname': 'KanColleStaffAvatarThumb'
     },
     'c2': {
-        'url': CONFIG['twitter']['c2_url'],
+        'screen_name': CONFIG['twitter']['c2_screen_name'],
         'twitter_nickname': 'C2機関',
         'filename': 'C2StaffAvatar',
         'thumbname': 'C2StaffAvatarThumb'
@@ -35,20 +36,48 @@ class AvatarService(object):
     def do(src='kancolle'):
         SAVE_DIR = CONFIG['twitter']['save_dir']
         DUPLI_SAVE_DIR = CONFIG['twitter']['dupli_dir']
+        BEARER_TOKEN = CONFIG['twitter']['bearer_token']
+        SCREEN_NAME = CONFIG[src]['screen_name']
         FILE_NAME = AVATAR_CONFIG_MAP[src]['filename']
         THUMB_NAME = AVATAR_CONFIG_MAP[src]['thumbname']
-        headers = {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'}
-        content = requests.get(AVATAR_CONFIG_MAP[src]['url'], headers=headers).content
-        avatar = pq(content)('.ProfileAvatar-image')
-        avatar_thumb = pq(content)('.stream-item-header .avatar')[0]
-        click.echo('Twitter avatar url: 【{}】'.format(avatar.attr('src')))
-        click.echo('Twitter avatar thumbnail url: 【{}】'.format(avatar_thumb.get('src')))
-        if avatar:
+        params = {'screen_name': SCREEN_NAME}
+        headers = {
+            'authorization': 'authorization: Bearer {}'.format(BEARER_TOKEN)
+        }
+        content = requests.get(
+            AVATAR_CONFIG_MAP['api'], params=params, headers=headers).text
+        avatar_url = json.loads(content).get('profile_image_url_https')
+        if not avatar_url or not isinstance(avatar_url, str):
+            echo.error('Can not find {} avatar'.format(SCREEN_NAME))
+            return
+        if not isinstance(avatar_url, str):
+            echo.error('Unexpected  avatar url {}'.format(avatar_url))
+            return
+
+        # ref: https://developer.twitter.com/en/docs/accounts-and-users/user-profile-images-and-banners
+        # remove '_normal' from avatar_url
+        # example
+        # from http://pbs.twimg.com/profile_images/1327246587685269504/RElBPPS-_normal.png
+        # to http://pbs.twimg.com/profile_images/1327246587685269504/RElBPPS-.png
+        url_segments = avatar_url.split('_normal')
+        if len(url_segments) != 2:
+            echo.error('Unexpected avatar url: {}'.format(avatar_url))
+            return
+        original_avatar_url = url_segments[0] + url_segments[1]
+        # backward compatible
+        # TODO remove avatar_thumb_url?
+        avatar_thumb_url = avatar_url
+        del avatar_url
+        echo.info('Twitter avatar url: 【{}】'.format(original_avatar_url))
+
+        if original_avatar_url:
             # 解析推特头像、缩略图
-            image = Image.open(BytesIO(requests.get(avatar.attr('src')).content))
-            imageThumb = Image.open(BytesIO(requests.get(avatar_thumb.get('src')).content))
+            image = Image.open(
+                BytesIO(requests.get(original_avatar_url).content))
+            imageThumb = Image.open(
+                BytesIO(requests.get(avatar_thumb_url).content))
             suffix = 'png'
-            oriname = avatar.attr('src').split('/')[-1].split('.')[0]
+            oriname = original_avatar_url.split('/')[-1].split('.')[0]
             today = datetime.datetime.now().strftime('%Y%m%d%H%M')
             path = ''.join([DUPLI_SAVE_DIR, '/', oriname, '.', suffix])
             image_url_path = ''.join([SAVE_DIR, '/', 'image_url.txt'])
