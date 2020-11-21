@@ -3,7 +3,6 @@ import os
 import datetime
 from glob import glob
 from io import BytesIO
-from pyquery import PyQuery as pq
 import requests
 from moebot import MwApi
 from PIL import Image
@@ -36,22 +35,23 @@ class AvatarService(object):
         SAVE_DIR = CONFIG['twitter']['save_dir']
         DUPLI_SAVE_DIR = CONFIG['twitter']['dupli_dir']
         BEARER_TOKEN = CONFIG['twitter']['bearer_token']
-        SCREEN_NAME = CONFIG[src]['screen_name']
+        SCREEN_NAME = AVATAR_CONFIG_MAP[src]['screen_name']
         FILE_NAME = AVATAR_CONFIG_MAP[src]['filename']
         THUMB_NAME = AVATAR_CONFIG_MAP[src]['thumbname']
         params = {'screen_name': SCREEN_NAME}
         headers = {
-            'authorization': 'authorization: Bearer {}'.format(BEARER_TOKEN)
+            'authorization': 'Bearer {}'.format(BEARER_TOKEN)
         }
-        content = requests.get(
-            AVATAR_CONFIG_MAP['api'], params=params, headers=headers).text
-        avatar_url = json.loads(content).get('profile_image_url_https')
-        if not avatar_url or not isinstance(avatar_url, str):
+        resp = requests.get(
+            AVATAR_CONFIG_MAP['api'], params=params, headers=headers)
+        content = resp.text
+        if resp.status_code != 200:
             echo.error('Can not find {} avatar'.format(SCREEN_NAME))
+            echo.error('Error from twitter, code: {}'.format(
+                resp.status_code))
+            echo.error(content)
             return
-        if not isinstance(avatar_url, str):
-            echo.error('Unexpected  avatar url {}'.format(avatar_url))
-            return
+        avatar_url = json.loads(content).get('profile_image_url_https')
 
         # ref: https://developer.twitter.com/en/docs/accounts-and-users/user-profile-images-and-banners
         # remove '_normal' from avatar_url
@@ -63,8 +63,6 @@ class AvatarService(object):
             echo.error('Unexpected avatar url: {}'.format(avatar_url))
             return
         original_avatar_url = url_segments[0] + url_segments[1]
-        # backward compatible
-        # TODO remove avatar_thumb_url?
         avatar_thumb_url = avatar_url
         del avatar_url
         echo.info('Twitter avatar url: 【{}】'.format(original_avatar_url))
