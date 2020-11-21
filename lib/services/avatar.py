@@ -30,7 +30,6 @@ AVATAR_CONFIG_MAP = {
 }
 
 
-
 class AvatarService(object):
     @staticmethod
     def do(src='kancolle'):
@@ -70,52 +69,53 @@ class AvatarService(object):
         del avatar_url
         echo.info('Twitter avatar url: 【{}】'.format(original_avatar_url))
 
-        if original_avatar_url:
-            # 解析推特头像、缩略图
-            image = Image.open(
-                BytesIO(requests.get(original_avatar_url).content))
-            imageThumb = Image.open(
-                BytesIO(requests.get(avatar_thumb_url).content))
-            suffix = 'png'
-            oriname = original_avatar_url.split('/')[-1].split('.')[0]
-            today = datetime.datetime.now().strftime('%Y%m%d%H%M')
-            path = ''.join([DUPLI_SAVE_DIR, '/', oriname, '.', suffix])
-            image_url_path = ''.join([SAVE_DIR, '/', 'image_url.txt'])
-            image_url = ''.join(['http://static.kcwiki.moe/Avatar/',
-                                 oriname, 'Thumb.', suffix])
-            avatar_updated_flag = False
-            # 检测头像是否更新，如果没有更新，不进行存取操作
-            if os.path.exists(path):
-                echo.info("Current avatar is newest.")
-                if not os.path.exists(image_url_path):
-                    with open(image_url_path, 'w') as f:
-                        f.write(image_url)
-            else:
-                # 存取头像到指定目录
-                echo.info("Saving avatar...")
-                AvatarService._save(image, DUPLI_SAVE_DIR, FILE_NAME + today, suffix)
-                avatar_updated_flag = True
+        # 解析推特头像、缩略图
+        image = Image.open(
+            BytesIO(requests.get(original_avatar_url).content))
+        imageThumb = Image.open(
+            BytesIO(requests.get(avatar_thumb_url).content))
+        suffix = 'png'
+        oriname = original_avatar_url.split('/')[-1].split('.')[0]
+        today = datetime.datetime.now().strftime('%Y%m%d%H%M')
+        path = ''.join([DUPLI_SAVE_DIR, '/', oriname, '.', suffix])
+        image_url_path = ''.join([SAVE_DIR, '/', 'image_url.txt'])
+        image_url = ''.join(['http://static.kcwiki.moe/Avatar/',
+                             oriname, 'Thumb.', suffix])
+        avatar_updated_flag = False
+        # 检测头像是否更新，如果没有更新，不进行存取操作
+        if os.path.exists(path):
+            echo.info("Current avatar is newest.")
+            if not os.path.exists(image_url_path):
                 with open(image_url_path, 'w') as f:
                     f.write(image_url)
-                requests.get('http://api.kcwiki.moe/purge/avatar')
-            AvatarService._save(image, SAVE_DIR, FILE_NAME, suffix)
-            AvatarService._save(imageThumb, SAVE_DIR, THUMB_NAME, suffix)
-            AvatarService._save(image, DUPLI_SAVE_DIR, oriname, suffix)
-            AvatarService._save(image, DUPLI_SAVE_DIR, oriname + 'Thumb', suffix)
-            # 上传头像到Kcwiki
-            if CONFIG['env'] != 'local' and src == 'kancolle':
-                pathTimestamp = ''.join([DUPLI_SAVE_DIR, '/',
-                                         oriname, '.', suffix])
-                filename = ''.join([FILE_NAME, today, '.', suffix])
-                rep = AvatarService._upload(pathTimestamp, filename)
-            if avatar_updated_flag:
-                echo.info('微博更新头像……')
-                AvatarService.weibo_share(''.join([SAVE_DIR, '/', FILE_NAME, '.', suffix]), src)
-            archives = [x.split('/')[-1] for x in list(glob("{}/KanColleStaffAvatar*.png".format(DUPLI_SAVE_DIR)))]
-            archives = sorted(archives)
-            json.dump(archives, open('{}/archives.json'.format(DUPLI_SAVE_DIR), 'w'))
         else:
-            echo.error('Can not find kancolle_staff avatar')
+            # 存取头像到指定目录
+            echo.info("Saving avatar...")
+            AvatarService._save(image, DUPLI_SAVE_DIR,
+                                FILE_NAME + today, suffix)
+            avatar_updated_flag = True
+            with open(image_url_path, 'w') as f:
+                f.write(image_url)
+            requests.get('http://api.kcwiki.moe/purge/avatar')
+        AvatarService._save(image, SAVE_DIR, FILE_NAME, suffix)
+        AvatarService._save(imageThumb, SAVE_DIR, THUMB_NAME, suffix)
+        AvatarService._save(image, DUPLI_SAVE_DIR, oriname, suffix)
+        AvatarService._save(image, DUPLI_SAVE_DIR, oriname + 'Thumb', suffix)
+        # 上传头像到Kcwiki
+        if CONFIG['env'] != 'local' and src == 'kancolle':
+            pathTimestamp = ''.join([DUPLI_SAVE_DIR, '/',
+                                     oriname, '.', suffix])
+            filename = ''.join([FILE_NAME, today, '.', suffix])
+            rep = AvatarService._upload(pathTimestamp, filename)
+        if avatar_updated_flag:
+            echo.info('微博更新头像……')
+            AvatarService.weibo_share(
+                ''.join([SAVE_DIR, '/', FILE_NAME, '.', suffix]), src)
+        archives = [x.split(
+            '/')[-1] for x in list(glob("{}/KanColleStaffAvatar*.png".format(DUPLI_SAVE_DIR)))]
+        archives = sorted(archives)
+        json.dump(archives, open(
+            '{}/archives.json'.format(DUPLI_SAVE_DIR), 'w'))
 
     @staticmethod
     def _save(image, dir_, name, suffix):
@@ -140,8 +140,7 @@ class AvatarService(object):
         weibo_client = Client(weibo['api_key'], weibo['api_secret'], weibo['redirect_url'],
                               username=weibo['username'], password=weibo['password'])
         with open(image_path, 'rb') as pic:
-            resp = weibo_client.post('statuses/share', status='{} 头像更新 https://zh.kcwiki.org'.format(AVATAR_CONFIG_MAP[src]['twitter_nickname']), pic=pic)
+            resp = weibo_client.post('statuses/share', status='{} 头像更新 https://zh.kcwiki.org'.format(
+                AVATAR_CONFIG_MAP[src]['twitter_nickname']), pic=pic)
             with open('/tmp/weibo_post_status.log', 'w') as fd:
                 fd.write(json.dumps(resp))
-
-
