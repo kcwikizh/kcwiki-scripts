@@ -24,7 +24,7 @@ requests==2.18.4
 requests-toolbelt==0.8.0
 schedule==0.3.2
 six==1.11.0
-thefuck==3.16
+thefuck==3.31
 tqdm==4.19.5
 twine==1.9.1
 urllib3==1.22
